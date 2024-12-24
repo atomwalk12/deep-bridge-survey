@@ -40,6 +40,8 @@
     },
     "cSpell.words": [
         "AREPL",
+        "collectgarbage",
+        "cutorch",
         "gloo",
         "imagenet",
         "Maysee",
