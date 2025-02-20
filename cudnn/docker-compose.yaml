@@ -1,0 +1,14 @@
+services:
+  cuda_dev:
+    image: nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: tail -f /dev/null
