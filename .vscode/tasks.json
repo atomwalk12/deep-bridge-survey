@@ -61,6 +61,43 @@
                 "isDefault": false
             },
             "detail": "Task for CUDA debugging"
+        },
+        {
+            // CUDA build for GPU trainer
+            "type": "cppbuild",
+            "label": "CUDA: nvcc toy network",
+            "command": "nvcc",
+            "args": [
+                "-g", 
+                "-G",
+                "-O0",
+                "-arch=sm_89",
+                "--compiler-options",
+                "'-fPIC'",
+                "cudnn/gpu/toy_network.cu",
+                "cudnn/gpu/alexnet.cu",
+                "cudnn/gpu/conv_layer.cu",
+                "cudnn/gpu/utils.cu",
+                "cudnn/gpu/loss.cu",
+                "cudnn/gpu/fc_layer.cu",
+                "cudnn/gpu/relu.cu",
+                "-o",
+                "cudnn/toy_network",
+                "-lcudnn",
+                "-lcublas",
+                //"-lineinfo"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$nvcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "detail": "Task for CUDA debugging"
         }
     ]
 }

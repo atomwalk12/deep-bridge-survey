@@ -57,13 +57,10 @@ int main() {
     checkCUDNN(cudnnCreate(&cudnn));
 
     // Create network
-    Network model(cudnn, BATCH_SIZE, NUM_CLASSES);
+    Network model(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
     
     // Add layers with AlexNet parameters
     model.addConvLayer(
-        INPUT_WIDTH,
-        INPUT_HEIGHT,
-        IN_CHANNELS,
         CONV_OUT_CHANNELS,
         CONV_KERNEL_SIZE,
         CONV_STRIDE,
@@ -75,7 +72,7 @@ int main() {
     const int conv_output_width = (INPUT_WIDTH - CONV_KERNEL_SIZE + 2 * CONV_PADDING) / CONV_STRIDE + 1;
     
     model.addFCLayer(
-        CONV_OUT_CHANNELS * conv_output_width * conv_output_height,
+        model.getFlattenedSize(),
         NUM_CLASSES
     );
 

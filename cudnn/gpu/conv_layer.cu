@@ -142,7 +142,12 @@ void ConvolutionLayer::forward(float* input, float* output) {
 
     // Allocate temporary buffer for convolution output before ReLU
     float* conv_output;
-    size_t output_size = batch_size * out_channels * output_height * output_width * sizeof(float);
+
+    // input.size = (1,1,3,3) and it is filled with 4.0f
+    // weights.size = 1, defined as out_channels * in_channels * kernel_size * kernel_size = 1x1x1x1
+    // output_size.size = (1,1,5,5)
+    size_t output_size = batch_size * out_channels * output_height * output_width * sizeof(float); 
+
     cudaMallocManaged(&conv_output, output_size);
 
     // Perform convolution using the pre-allocated workspace
@@ -159,43 +164,17 @@ void ConvolutionLayer::forward(float* input, float* output) {
         workspace_size,
         &beta,
         output_descriptor,
-        conv_output  // Store in temporary buffer
+        conv_output
     );
+    cudaDeviceSynchronize();
 
     if (status != CUDNN_STATUS_SUCCESS) {
         printf("CUDNN forward failed: %s\n", cudnnGetErrorString(status));
         exit(1);
     }
 
-    // Debug conv_output distribution
-    int total_elements = batch_size * out_channels * output_height * output_width;
-    float max_conv = -1e9, min_conv = 1e9;
-    for(int i = 0; i < total_elements; i++) {
-        max_conv = max(max_conv, conv_output[i]);
-        min_conv = min(min_conv, conv_output[i]);
-    }
-    printf("Conv output dimensions: batch=%d, channels=%d, height=%d, width=%d\n",
-           batch_size, out_channels, output_height, output_width);
-    printf("Total elements: %d, ReLU sz_out: %d\n", total_elements, relu->getSzOut());
-    printf("Conv output range before ReLU: [%f, %f]\n", min_conv, max_conv);
-
     // Apply ReLU activation
     relu->forward(conv_output, output);  // Output first, then input
-
-    // Debug output distribution after ReLU
-    float max_out = -1e9, min_out = 1e9;
-    for(int i = 0; i < total_elements; i++) {
-        max_out = max(max_out, output[i]);
-        min_out = min(min_out, output[i]);
-    }
-    printf("Output range after ReLU: [%f, %f]\n", min_out, max_out);
-
-    printf("FC Layer Debug:\n");
-    printf("First 10 output values:\n");
-    for(int i = 0; i < min(10, total_elements); i++) {
-        printf("[%d]: %f\n", i, output[i]);
-    }
-    fflush(stdout);
 
     // Free temporary buffer
     cudaFree(conv_output);

@@ -24,6 +24,17 @@
             "preLaunchTask": "CUDA: nvcc debug build"
         },
         {
+            // CUDA Debug for toy network
+            "name": "CUDA Toy Network Debug",
+            "type": "cuda-gdb",
+            "request": "launch",
+            "program": "${workspaceFolder}/cudnn/toy_network",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "CUDA: nvcc toy network"
+        },
+        {
             // C++ Debug
             "name": "C++ Debug",
             "type": "cppdbg",

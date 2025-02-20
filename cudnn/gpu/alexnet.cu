@@ -3,8 +3,13 @@
 #include "utils.h"
 #include <string>
 
-Network::Network(cudnnHandle_t& handle, int batch_size, int num_classes_) 
-    : cudnn(handle), batch_size_(batch_size), num_classes_(num_classes_) {
+Network::Network(cudnnHandle_t& handle, int batch_size, int num_classes_, int initial_width, int initial_height, int initial_channels) 
+    : cudnn(handle), 
+      batch_size_(batch_size), 
+      num_classes_(num_classes_),
+      current_width_(initial_width),
+      current_height_(initial_height),
+      current_channels_(initial_channels) {
     cublasCreate(&cublas);
 }
 
@@ -124,17 +129,28 @@ Network::~Network() {
     }
 }
 
-void Network::addConvLayer(int input_width, int input_height, int in_channels, int out_channels, 
-                          int kernel_size, int stride, int padding) {
-    // Create and add the convolutional layer
-
-    ConvolutionLayer* conv_layer = new ConvolutionLayer(cudnn, input_width, input_height, batch_size_,
-                          in_channels, out_channels, 
-                          kernel_size, stride, padding);
+void Network::addConvLayer(int out_channels, int kernel_size, int stride, int padding) {
+    // Create and add the convolutional layer using current dimensions
+    ConvolutionLayer* conv_layer = new ConvolutionLayer(
+        cudnn, 
+        current_width_, 
+        current_height_, 
+        batch_size_,
+        current_channels_, 
+        out_channels, 
+        kernel_size, 
+        stride, 
+        padding
+    );
     layers.push_back(conv_layer);
     
+    // Update current dimensions for next layer
+    current_width_ = conv_layer->getOutputWidth();
+    current_height_ = conv_layer->getOutputHeight();
+    current_channels_ = out_channels;
+    
     // Allocate memory for layer outputs and gradients
-    size_t output_size = conv_layer->getOutputHeight() * conv_layer->getOutputWidth();  // Adjust dimensions based on input/stride/padding
+    size_t output_size = batch_size_ * current_channels_ * current_height_ * current_width_;
     
     // Forward pass output
     float* layer_output;

@@ -10,11 +10,10 @@
 
 class Network {
 public:
-    Network(cudnnHandle_t& handle, int batch_size, int num_classes);
+    Network(cudnnHandle_t& handle, int batch_size, int num_classes, int initial_width, int initial_height, int initial_channels);
     ~Network();
     
-    void addConvLayer(int width, int height, int in_channels, int out_channels, 
-                     int kernel_size, int stride, int padding);
+    void addConvLayer(int out_channels, int kernel_size, int stride, int padding);
     void addFCLayer(int in_features, int out_features);
     
     void forward(float *inp, float *out);
@@ -28,6 +27,10 @@ public:
         return batch_size_ * num_classes_;
     }
     
+    int getFlattenedSize() const {
+        return current_channels_ * current_height_ * current_width_;
+    }
+    
 private:
     cudnnHandle_t& cudnn;
     cublasHandle_t cublas;
@@ -38,6 +41,9 @@ private:
 
     int batch_size_;
     int num_classes_;
+    int current_width_;
+    int current_height_;
+    int current_channels_;
 };
 
 #endif // NETWORK_H 
