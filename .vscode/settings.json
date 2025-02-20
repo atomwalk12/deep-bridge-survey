@@ -36,7 +36,11 @@
         "valarray": "cpp",
         "cstdlib": "cpp",
         "random": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "charconv": "cpp",
+        "ratio": "cpp",
+        "system_error": "cpp",
+        "type_traits": "cpp"
     },
     "cSpell.words": [
         "AREPL",
@@ -50,5 +54,6 @@
         "nnodes",
         "rdzv",
         "torchrun"
-    ]
+    ],
+    "C_Cpp.default.compilerPath": ""
 }

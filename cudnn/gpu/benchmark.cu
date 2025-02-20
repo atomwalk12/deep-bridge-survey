@@ -2,7 +2,7 @@
 #include "alexnet.h"
 #include <chrono>
 #include "loss.h"
-
+#include "utils.h"
 // Benchmark parameters
 const int NUM_ITERATIONS = 100;
 const int WARMUP_ITERATIONS = 300;
@@ -79,6 +79,10 @@ int main() {
         NUM_CLASSES
     );
 
+    // Initialize cost history
+    CostHistory cost_history;
+    cost_history_init(&cost_history);
+
     // These vectors will be initialized with random values
     // ================================
     // =====      Input data      =====
@@ -133,6 +137,9 @@ int main() {
         
         // Compute loss and gradients
         float loss_value = loss.compute(output_data, target_data, OUTPUT_SIZE);
+
+        if (i % 10 == 0) cost_history_add(&cost_history, loss_value);
+
         loss.backward(output_data, target_data, output_gradient, OUTPUT_SIZE);
         
         // Backward pass
@@ -145,6 +152,8 @@ int main() {
         
         printf("Iteration %d, Loss: %f\n", i, loss_value);
     }
+
+    plot_cost_ascii(&cost_history);
 
     cudaDeviceSynchronize();
 
