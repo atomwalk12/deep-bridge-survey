@@ -1,7 +1,7 @@
 #ifndef RELU_GPU_H
 #define RELU_GPU_H
 
-class ReLU_GPU {
+class ReLU {
     private:
         float* forward_input;
         int sz_out;
@@ -10,7 +10,7 @@ class ReLU_GPU {
 
         
     public:
-        ReLU_GPU(int _sz_out);
+        ReLU(int _sz_out);
         void forward(float* _inp, float* _out);
         void backward(float* gradient_out, float* gradient_in);
 

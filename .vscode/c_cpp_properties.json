@@ -7,7 +7,7 @@
                 "/usr/local/cuda/include"
             ],
             "defines": [],
-            "compilerPath": "/opt/cuda/bin/nvcc",
+            "compilerPath": "",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-x64"

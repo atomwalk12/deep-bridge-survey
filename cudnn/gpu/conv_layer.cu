@@ -29,7 +29,7 @@ ConvolutionLayer::ConvolutionLayer(cudnnHandle_t& cudnn_handle,
 
     // Initialize ReLU with the total size of the output
     int total_elements = batch_size * out_channels * output_height * output_width;
-    relu = new ReLU_GPU(total_elements);
+    relu = new ReLU(total_elements);
 
     // Initialize cublas
     cublasCreate(&cublas_handle);
@@ -93,16 +93,15 @@ void ConvolutionLayer::createDescriptors() {
         batch_size, out_channels, output_height, output_width
     );
 
-    // Allocate and initialize weights and biases
+    // Initialize weights and biases
     size_t weight_size = getWeightSize();
     cudaMallocManaged(&weights, weight_size * sizeof(float));
     cudaMallocManaged(&weight_gradients, weight_size * sizeof(float));
 
-    // Initialize weights using Gaussian distribution (AlexNet paper specification)
+
     std::random_device rd;
     std::mt19937 gen(rd());
     float std = sqrt(2.0f / (in_channels * kernel_size * kernel_size));
-    // float std_alexnet = 0.01f;
     std::normal_distribution<float> distribution(0.0f, std);
 
     for (size_t i = 0; i < weight_size; i++) {
@@ -143,9 +142,6 @@ void ConvolutionLayer::forward(float* input, float* output) {
     // Allocate temporary buffer for convolution output before ReLU
     float* conv_output;
 
-    // input.size = (1,1,3,3) and it is filled with 4.0f
-    // weights.size = 1, defined as out_channels * in_channels * kernel_size * kernel_size = 1x1x1x1
-    // output_size.size = (1,1,5,5)
     size_t output_size = batch_size * out_channels * output_height * output_width * sizeof(float); 
 
     cudaMallocManaged(&conv_output, output_size);

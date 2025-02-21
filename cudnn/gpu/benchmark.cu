@@ -1,41 +1,25 @@
 #include <stdio.h>
-#include "alexnet.h"
+#include "network.h"
 #include <chrono>
 #include "loss.h"
 #include "utils.h"
+
 // Benchmark parameters
 const int NUM_ITERATIONS = 100;
 const int WARMUP_ITERATIONS = 300;
-
-// // Network parameters
-// const int BATCH_SIZE = 3;
-// const int NUM_CLASSES = 3;
-
-// // Modified for AlexNet input specifications
-// const int IN_CHANNELS = 3;  // RGB input
-// const int INPUT_HEIGHT = 224;
-// const int INPUT_WIDTH = 224;
-
-// // Modified for AlexNet first conv layer
-// const int CONV_OUT_CHANNELS = 96;  // AlexNet's first layer filter count
-// const int CONV_KERNEL_SIZE = 11;   // 11x11 kernel
-// const int CONV_STRIDE = 4;         // Stride of 4
-// const int CONV_PADDING = 0;        // No padding
 
 // Network parameters
 const int BATCH_SIZE = 1;
 const int NUM_CLASSES = 3;
 
-// Modified for AlexNet input specifications
 const int IN_CHANNELS = 1;
 const int INPUT_HEIGHT = 2;
 const int INPUT_WIDTH = 3;
 
-// Modified for AlexNet first conv layer
-const int CONV_OUT_CHANNELS = 2;  // AlexNet's first layer filter count
-const int CONV_KERNEL_SIZE = 2;   // 11x11 kernel
-const int CONV_STRIDE = 1;         // Stride of 4
-const int CONV_PADDING = 0;        // No padding
+const int CONV_OUT_CHANNELS = 2;
+const int CONV_KERNEL_SIZE = 2;
+const int CONV_STRIDE = 1;
+const int CONV_PADDING = 0;
 
 // Define sizes in terms of number of elements
 const int INPUT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
@@ -59,17 +43,12 @@ int main() {
     // Create network
     Network model(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
     
-    // Add layers with AlexNet parameters
     model.addConvLayer(
         CONV_OUT_CHANNELS,
         CONV_KERNEL_SIZE,
         CONV_STRIDE,
         CONV_PADDING
     );
-    
-    // Note: You might need to adjust the FC layer input size based on the conv output
-    const int conv_output_height = (INPUT_HEIGHT - CONV_KERNEL_SIZE + 2 * CONV_PADDING) / CONV_STRIDE + 1;
-    const int conv_output_width = (INPUT_WIDTH - CONV_KERNEL_SIZE + 2 * CONV_PADDING) / CONV_STRIDE + 1;
     
     model.addFCLayer(
         model.getFlattenedSize(),
@@ -80,7 +59,6 @@ int main() {
     CostHistory cost_history;
     cost_history_init(&cost_history);
 
-    // These vectors will be initialized with random values
     // ================================
     // =====      Input data      =====
     // ================================
@@ -116,7 +94,6 @@ int main() {
     // ================================
     // =====      Warmup run      =====
     // ================================
-    // MSELoss loss;
     
     // Target data still needs size, but we get it from the model
     float* target_data;

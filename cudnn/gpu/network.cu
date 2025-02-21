@@ -1,4 +1,4 @@
-#include "alexnet.h"
+#include "network.h"
 #include <cstdlib>
 #include "utils.h"
 #include <string>
@@ -17,8 +17,6 @@ void Network::forward(float *inp, float *out) {
     float* current_input = inp;
     
     for (size_t i = 0; i < layers.size(); i++) {
-        // TODO: This is a hack to get the output of the last layer. should be layers.size() - 1
-        // 
         float* current_output = (i == layers.size() - 1) ? out : layer_outputs[i];
         layers[i]->forward(current_input, current_output);
         current_input = current_output;
