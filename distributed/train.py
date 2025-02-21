@@ -312,7 +312,8 @@ def train(config, train_loader, model, criterion, optimizer, epoch, device, glob
     epoch_end_time = time.time()
     epoch_time = epoch_end_time - epoch_start_time
     avg_batch_time = sum(batch_times) / len(batch_times)
-    throughput_per_second = len(train_loader) / epoch_time
+    world_size = int(os.environ["WORLD_SIZE"])
+    throughput_per_second = (len(train_loader) * world_size) / epoch_time
 
     # Log for one node only
     if config.global_rank == 0:

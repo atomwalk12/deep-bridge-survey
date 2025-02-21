@@ -3,8 +3,7 @@
         {
             "name": "CUDA",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/usr/local/cuda/include"
+                "${workspaceFolder}/**"
             ],
             "defines": [],
             "compilerPath": "",

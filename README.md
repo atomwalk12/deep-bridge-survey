@@ -1,20 +1,67 @@
+This repository contains benchmarks for GPU training using cuDNN and simulates distributed training with PyTorch via DDP. 
+For convenience, both of these are executable via Docker, but can be run without as well.
+
+# Prerequisites
+If you'd like to run the code via Docker (recommended), you'll need to install the NVIDIA Container Toolkit. To do this, follow the [official installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). Otherwise, the CUDA toolkit needs to be installed on the host machine.
+
+
+# Simulating Distributed Training with Docker
+
+## Running the code
+
+The code is available in [train.py](./distributed/train.py).
+
+Key parameters:
+
+- The --nnodes flag represents the number of machines communicating over a (simulated) network
+- The --nproc_per_node flag stands for the number of GPUs on a single machine.
+
+To simulate 2 GPUs (processes) on a single machine (node) run:
+
+```bash
+# Start the containers
+docker-compose -f docker-compose-multi-process.yaml up -d
+
+# Enter the container and login to wandb
+docker-compose -f docker-compose-multi-process.yaml exec node bash
+wandb login
+
+# Single node, simulate two GPUs using two processes.
+torchrun --nnodes=1 --nproc_per_node=2 --rdzv_id=456 --rdzv_backend=c10d --rdzv_endpoint=node:48123 train.py --no_checkpoint
+```
+
+Also, you can simulate training over multiple machines with a single GPU for each:
+
+```bash
+# Start the containers
+docker-compose -f docker-compose-multi-node.yaml up -d
+
+# Open terminal 1 and login to wandb:
+docker-compose -f docker-compose-multi-node.yaml exec node0 bash
+wandb login
+
+# Open terminal 2
+# Note: the wandb query is not required for node1, as we log data through node0
+docker-compose -f docker-compose-multi-node.yaml exec node1 bash
+
+# Run the training script in each terminal
+torchrun --nnodes=2 --nproc_per_node=1 --rdzv_id=456 --rdzv_backend=c10d --rdzv_endpoint=node0:48123 train.py --no_checkpoint
+```
+
 # Simple cuDNN network
 
-This repository contains benchmarks for GPU training using cuDNN and examples for simulating distributed training using Docker Swarm.
+## Getting Started
 
-## Prerequisites
-
-1. Install the NVIDIA Container Toolkit by following the [official installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
-2. Check your CUDA version by running
+1. Check your CUDA version by running
 
    ```bash
    nvidia-smi
    ```
-3. Update the image tag in [docker-compose.yaml](cudnn/docker-compose.yaml) to match your GPU's CUDA version.
+
+2. Update the image tag in [docker-compose.yaml](cudnn/docker-compose.yaml) to match your GPU's CUDA version.
+
    - Current default: `nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04` (compatible with 40xx series GPUs)
    - Find your compatible image tag at [NVIDIA CUDA Docker Hub](https://hub.docker.com/r/nvidia/cuda/tags)
-
-## Getting Started
 
 ### Building and Running the Code
 
@@ -27,6 +74,8 @@ docker-compose exec cuda_dev bash # enter the container
 ./compile.sh
 ./runner
 ```
+
+The docker-compose commands are optional. To execute the code without Docker, simply run `compile.sh` and `runner.sh` without entering a container.
 
 ## Code walkthrough
 
@@ -44,6 +93,7 @@ docker-compose exec cuda_dev bash # enter the container
 
 Below is a simplified example implementation of a neural network training. Check [toy_network.cu](./cudnn/gpu/toy_network.cu) for the complete code:
 
+collapse
 ```c++
 // ==============================
 // Initialization
@@ -85,9 +135,6 @@ model.addFCLayer(128, 10); // output has 10 classes
 
 float* output_gradient = model.createDummyGradient(output_data);
 float* input_gradient;
-
-cudaMallocManaged(&input_gradient, INPUT_GRADIENT_SIZE * sizeof(float));
-cudaDeviceSynchronize();
 
 // ==============================
 // Training
@@ -141,4 +188,3 @@ Cost Function Over Epochs
   0.4410 ┴────────────────────────────────────────────────── 30 epochs
 */
 ```
-
