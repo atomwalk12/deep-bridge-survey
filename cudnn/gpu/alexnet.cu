@@ -95,7 +95,9 @@ void Network::updateWeights(float learning_rate) {
                     conv->getWeightGradients(), 1,
                     conv->getWeights(), 1);
 
-        checkWeightChanges(("Layer " + std::to_string(i)).c_str(), conv->getWeights(), conv->getWeightSize());
+        if (ENABLE_DEBUG_OUTPUT) {
+            checkWeightChanges(("Layer " + std::to_string(i)).c_str(), conv->getWeights(), conv->getWeightSize());
+        }
     }
 }
 

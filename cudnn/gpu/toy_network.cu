@@ -47,9 +47,12 @@ void checkCUDNN(cudnnStatus_t status) {
 int main() {
     std::chrono::steady_clock::time_point begin, end;
 
-    // Initialize CUDNN
+    // Initialize
     cudnnHandle_t cudnn;
     checkCUDNN(cudnnCreate(&cudnn));
+
+    CostHistory cost_history;
+    cost_history_init(&cost_history);
 
     // Create network with initial dimensions
     Network model(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
@@ -58,17 +61,10 @@ int main() {
     model.addConvLayer(CONV1_OUT_CHANNELS, CONV1_KERNEL_SIZE, CONV1_STRIDE, CONV1_PADDING);
     model.addConvLayer(CONV2_OUT_CHANNELS, CONV2_KERNEL_SIZE, CONV2_STRIDE, CONV2_PADDING);
     model.addConvLayer(CONV3_OUT_CHANNELS, CONV3_KERNEL_SIZE, CONV3_STRIDE, CONV3_PADDING);
-    
-    // Dense layers with gradual size reduction
     model.addFCLayer(model.getFlattenedSize(), 512);
     model.addFCLayer(512, 128);
     model.addFCLayer(128, NUM_CLASSES);
 
-    // Initialize cost history
-    CostHistory cost_history;
-    cost_history_init(&cost_history);
-
-    // These vectors will be initialized with random values
     // ================================
     // =====      Input data      =====
     // ================================
@@ -115,10 +111,9 @@ int main() {
 
     MSELoss loss;
 
-    // ================================
-    // =====      Warmup run      =====
-    // ================================
-    // MSELoss loss;
+    // ==============================
+    // =====      Training      =====
+    // ==============================
     
     for (int i = 0; i < WARMUP_ITERATIONS; i++) {
         model.zeroGradients();
