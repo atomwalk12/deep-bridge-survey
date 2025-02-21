@@ -1,13 +1,11 @@
-# Table of Contents
-
-* [Distributed Training with Docker](#distributed-training-with-docker)
-   * [Prerequisites](#prerequisites)
-   * [Running the code](#running-the-code)
-   * [Training script](#training-script)
-* [Simple cuDNN network](#simple-cudnn-network)
-   * [Dependencies](#dependencies)
-   * [Building and running the Code](#building-and-running-the-code)
-   * [Code walkthrough](#code-walkthrough)
+- [Distributed Training with Docker](#distributed-training-with-docker)
+  - [Prerequisites](#prerequisites)
+  - [Running the code](#running-the-code)
+  - [Training script](#training-script)
+- [Simple cuDNN network](#simple-cudnn-network)
+  - [Dependencies](#dependencies)
+  - [Building and running the Code](#building-and-running-the-code)
+  - [Code walkthrough](#code-walkthrough)
 
 # Distributed Training with Docker
 
@@ -91,15 +89,17 @@ The docker-compose commands are optional. To execute the code without Docker, si
 
 ## Code walkthrough
 
-- `Network`: It stores an array of layers, manages forward/backward passes, and updates weights.
+- `Network` [@gpu/network.cu](./cudnn/gpu/network.cu): It stores an array of layers, manages forward/backward passes, and updates weights.
 
-- `ConvolutionLayer`: Implements 2D convolution operations using cuDNN
-- `FCLayer`: Implements fully connected layers using cuBLAS
-- `ReLU`: Implements the ReLU activation function using custom CUDA kernels
+- `ConvolutionLayer` [@gpu/conv_layer.cu](./cudnn/gpu/conv_layer.cu): Implements 2D convolution operations using cuDNN
 
-- `MSELoss`: Implements Mean Squared Error loss computation and gradients
+- `FCLayer` [@gpu/fc_layer.cu](./cudnn/gpu/fc_layer.cu): Implements fully connected layers using cuBLAS
 
-- `CostHistory`: Tracks and visualizes training loss over time
+- `ReLU` [@gpu/relu.cu](./cudnn/gpu/relu.cu): Implements the ReLU activation function using custom CUDA kernels
+
+- `MSELoss` [@gpu/loss.cu](./cudnn/gpu/loss.cu): Implements Mean Squared Error loss computation and gradients
+
+- `CostHistory` [@gpu/utils.cu](./cudnn/gpu/utils.cu): Tracks and visualizes training loss over time
 
 Below is a simplified example implementation of a neural network training process. Check [toy_network.cu](./cudnn/gpu/toy_network.cu) for the complete code:
 
