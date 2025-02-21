@@ -4,8 +4,7 @@
 #include "loss.h"
 #include "utils.h"
 // Benchmark parameters
-const int NUM_ITERATIONS = 100;
-const int WARMUP_ITERATIONS = 300;
+const int NUM_ITERATIONS = 300;
 
 // Network parameters
 const int BATCH_SIZE = 1;
@@ -45,35 +44,22 @@ void checkCUDNN(cudnnStatus_t status) {
 }
 
 int main() {
-    std::chrono::steady_clock::time_point begin, end;
 
-    // Initialize
+    // ==============================
+    // Initialization
+    // ==============================
     cudnnHandle_t cudnn;
     checkCUDNN(cudnnCreate(&cudnn));
 
     CostHistory cost_history;
     cost_history_init(&cost_history);
 
-    // Create network with initial dimensions
-    Network model(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
-    
-    // Add layers
-    model.addConvLayer(CONV1_OUT_CHANNELS, CONV1_KERNEL_SIZE, CONV1_STRIDE, CONV1_PADDING);
-    model.addConvLayer(CONV2_OUT_CHANNELS, CONV2_KERNEL_SIZE, CONV2_STRIDE, CONV2_PADDING);
-    model.addConvLayer(CONV3_OUT_CHANNELS, CONV3_KERNEL_SIZE, CONV3_STRIDE, CONV3_PADDING);
-    model.addFCLayer(model.getFlattenedSize(), 512);
-    model.addFCLayer(512, 128);
-    model.addFCLayer(128, NUM_CLASSES);
-
-    // ================================
-    // =====      Input data      =====
-    // ================================
+    // Create input data
     float *input_data, *output_data;
     
     cudaMallocManaged(&input_data, INPUT_SIZE * sizeof(float));
     cudaMallocManaged(&output_data, OUTPUT_SIZE * sizeof(float));
 
-    // Create input data with a simple pattern
     float static_input[BATCH_SIZE][IN_CHANNELS][INPUT_HEIGHT][INPUT_WIDTH] = {
         {   // batch 0
             {   // channel 0
@@ -84,13 +70,11 @@ int main() {
         }
     };
 
-    // Copy the static values to input_data
     for (int i = 0; i < INPUT_SIZE; i++) {
         input_data[i] = ((float*)static_input)[i];
     }
 
-    // Create target data with a clear pattern
-    // Let's say we want the network to classify this as class 0
+    // Create target data
     float* target_data;
     cudaMallocManaged(&target_data, OUTPUT_SIZE * sizeof(float));
 
@@ -103,19 +87,32 @@ int main() {
         output_data[i] = 0.0f;
     }
 
-    // Create dummy gradient for backward pass
+
+    // ==============================
+    // Create the network
+    // ==============================
+    Network model(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
+
+    model.addConvLayer(CONV1_OUT_CHANNELS, CONV1_KERNEL_SIZE, CONV1_STRIDE, CONV1_PADDING);
+    model.addConvLayer(CONV2_OUT_CHANNELS, CONV2_KERNEL_SIZE, CONV2_STRIDE, CONV2_PADDING);
+    model.addConvLayer(CONV3_OUT_CHANNELS, CONV3_KERNEL_SIZE, CONV3_STRIDE, CONV3_PADDING);
+    model.addFCLayer(model.getFlattenedSize(), 512);
+    model.addFCLayer(512, 128);
+    model.addFCLayer(128, NUM_CLASSES);
+
     float* output_gradient = model.createDummyGradient(output_data);
     float* input_gradient;
+
     cudaMallocManaged(&input_gradient, INPUT_GRADIENT_SIZE * sizeof(float));
     cudaDeviceSynchronize();
 
-    MSELoss loss;
 
     // ==============================
-    // =====      Training      =====
+    // Training
     // ==============================
-    
-    for (int i = 0; i < WARMUP_ITERATIONS; i++) {
+    MSELoss loss;
+
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
         model.zeroGradients();
         
         // Forward pass
@@ -142,7 +139,5 @@ int main() {
     plot_cost_ascii(&cost_history);
 
     cudaDeviceSynchronize();
-
-    // Cleanup
     cudaFree(target_data);
 }
