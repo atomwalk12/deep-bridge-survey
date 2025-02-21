@@ -1,15 +1,21 @@
-This repository contains benchmarks for GPU training using cuDNN and simulates distributed training with PyTorch via DDP. 
-For convenience, both of these are executable via Docker, but can be run without as well.
+# Table of Contents
 
-# Prerequisites
-If you'd like to run the code via Docker (recommended), you'll need to install the NVIDIA Container Toolkit. To do this, follow the [official installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). Otherwise, the CUDA toolkit needs to be installed on the host machine.
+* [Distributed Training with Docker](#distributed-training-with-docker)
+   * [Prerequisites](#prerequisites)
+   * [Running the code](#running-the-code)
+   * [Training script](#training-script)
+* [Simple cuDNN network](#simple-cudnn-network)
+   * [Dependencies](#dependencies)
+   * [Building and running the Code](#building-and-running-the-code)
+   * [Code walkthrough](#code-walkthrough)
 
+# Distributed Training with Docker
 
-# Simulating Distributed Training with Docker
+## Prerequisites
+
+To run this, you'll need to install the NVIDIA Container Toolkit from the [official installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 
 ## Running the code
-
-The code is available in [train.py](./distributed/train.py).
 
 Key parameters:
 
@@ -48,22 +54,28 @@ docker-compose -f docker-compose-multi-node.yaml exec node1 bash
 torchrun --nnodes=2 --nproc_per_node=1 --rdzv_id=456 --rdzv_backend=c10d --rdzv_endpoint=node0:48123 train.py --no_checkpoint
 ```
 
+## Training script
+
+The main training file is [train.py](./distributed/train.py).
+
 # Simple cuDNN network
 
-## Getting Started
+## Dependencies
 
-1. Check your CUDA version by running
+1. Install the NVIDIA Container Toolkit from the [official installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+
+2. Check your CUDA version by running
 
    ```bash
    nvidia-smi
    ```
 
-2. Update the image tag in [docker-compose.yaml](cudnn/docker-compose.yaml) to match your GPU's CUDA version.
+3. Update the image tag in [docker-compose.yaml](cudnn/docker-compose.yaml) to match your GPU's CUDA version.
 
    - Current default: `nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04` (compatible with 40xx series GPUs)
    - Find your compatible image tag at [NVIDIA CUDA Docker Hub](https://hub.docker.com/r/nvidia/cuda/tags)
 
-### Building and Running the Code
+## Building and running the Code
 
 Run the following to compile and run the code:
 
@@ -75,7 +87,7 @@ docker-compose exec cuda_dev bash # enter the container
 ./runner
 ```
 
-The docker-compose commands are optional. To execute the code without Docker, simply run `compile.sh` and `runner.sh` without entering a container.
+The docker-compose commands are optional. To execute the code without Docker, simply run `compile.sh` and `runner.sh` ignoring the docker commands. You'll need to have 
 
 ## Code walkthrough
 
@@ -89,11 +101,8 @@ The docker-compose commands are optional. To execute the code without Docker, si
 
 - `CostHistory`: Tracks and visualizes training loss over time
 
-### Example
+Below is a simplified example implementation of a neural network training process. Check [toy_network.cu](./cudnn/gpu/toy_network.cu) for the complete code:
 
-Below is a simplified example implementation of a neural network training. Check [toy_network.cu](./cudnn/gpu/toy_network.cu) for the complete code:
-
-collapse
 ```c++
 // ==============================
 // Initialization
