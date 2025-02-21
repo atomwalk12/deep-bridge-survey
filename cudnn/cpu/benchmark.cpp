@@ -17,7 +17,7 @@ int main() {
         std::cout << "Engine created successfully" << std::endl;
         
         // Try to create a simple memory descriptor
-        memory::dims dims = {1, 3, 224, 224};  // Same as our AlexNet input
+        memory::dims dims = {1, 3, 224, 224}; 
         auto md = memory::desc(dims, memory::data_type::f32, memory::format_tag::nchw);
         
         std::cout << "Memory descriptor created successfully" << std::endl;

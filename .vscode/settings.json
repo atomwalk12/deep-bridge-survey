@@ -55,5 +55,5 @@
         "rdzv",
         "torchrun"
     ],
-    "C_Cpp.default.compilerPath": "/opt/cuda/bin/nvcc"
+    "C_Cpp.default.compilerPath": ""
 }

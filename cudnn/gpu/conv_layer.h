@@ -62,7 +62,7 @@ private:
     cublasHandle_t cublas_handle;
     void* workspace;
     size_t workspace_size;
-    ReLU_GPU* relu;
+    ReLU* relu;
 };
 
 #endif // CONV_LAYER_H 

@@ -2,7 +2,7 @@
 
 SOURCES=(
     gpu/benchmark.cu
-    gpu/alexnet.cu
+    gpu/network.cu
     gpu/conv_layer.cu
     gpu/utils.cu
     gpu/loss.cu

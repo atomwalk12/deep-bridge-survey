@@ -1,8 +1,9 @@
 #include <stdio.h>
-#include "alexnet.h"
+#include "network.h"
 #include <chrono>
 #include "loss.h"
 #include "utils.h"
+
 // Benchmark parameters
 const int NUM_ITERATIONS = 300;
 
@@ -13,25 +14,21 @@ const int IN_CHANNELS = 1;
 const int INPUT_HEIGHT = 3;
 const int INPUT_WIDTH = 3;
 
-// First Conv2D layer parameters
-const int CONV1_OUT_CHANNELS = 16;  // Increased from 1
-const int CONV1_KERNEL_SIZE = 3;    // Increased from 2
+const int CONV1_OUT_CHANNELS = 16;
+const int CONV1_KERNEL_SIZE = 3;
 const int CONV1_STRIDE = 1;
 const int CONV1_PADDING = 1;
 
-// Second Conv2D layer parameters
 const int CONV2_OUT_CHANNELS = 32;
-const int CONV2_KERNEL_SIZE = 3;    // Increased from 1
+const int CONV2_KERNEL_SIZE = 3;
 const int CONV2_STRIDE = 1;
 const int CONV2_PADDING = 1;
 
-// Third Conv2D layer parameters
 const int CONV3_OUT_CHANNELS = 64;
-const int CONV3_KERNEL_SIZE = 3;    // Increased from 1
+const int CONV3_KERNEL_SIZE = 3;
 const int CONV3_STRIDE = 1;
 const int CONV3_PADDING = 1;
 
-// Define sizes in terms of number of elements
 const int INPUT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
 const int OUTPUT_SIZE = BATCH_SIZE * NUM_CLASSES;
 const int INPUT_GRADIENT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
@@ -78,13 +75,9 @@ int main() {
     float* target_data;
     cudaMallocManaged(&target_data, OUTPUT_SIZE * sizeof(float));
 
+    // Use one-hot encoding where 1 represents the correct class
     for (int i = 0; i < OUTPUT_SIZE; i++) {
-        target_data[i] = (i == 0) ? 1.0f : 0.0f;  // One-hot encoding for class 0
-    }
-
-    // Initialize output_data to zeros
-    for (int i = 0; i < OUTPUT_SIZE; i++) {
-        output_data[i] = 0.0f;
+        target_data[i] = (i == 0) ? 1.0f : 0.0f;
     }
 
 
@@ -115,21 +108,17 @@ int main() {
     for (int i = 0; i < NUM_ITERATIONS; i++) {
         model.zeroGradients();
         
-        // Forward pass
         model.forward(input_data, output_data);
         
-        // Compute loss and gradients
         float loss_value = loss.compute(output_data, target_data, OUTPUT_SIZE);
 
         if (i % 10 == 0) cost_history_add(&cost_history, loss_value);
 
         loss.backward(output_data, target_data, output_gradient, OUTPUT_SIZE);
         
-        // Backward pass
         model.backwardInput(input_gradient, output_gradient);
         model.backwardParams(input_data, output_gradient);
         
-        // Update weights
         model.updateWeights(0.001f);
         
         
