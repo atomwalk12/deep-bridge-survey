@@ -1,5 +1,5 @@
 
-The report is available in [here](docs/report.pdf) and the report [here](docs/poster.pdf).
+The report is available in [here](docs/report.pdf) and the poster [here](docs/poster.pdf).
 
 ![image](https://github.com/user-attachments/assets/8e0ed1f4-09ff-42f5-a1b6-4dc73542d43a)
 
