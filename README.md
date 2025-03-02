@@ -1,3 +1,6 @@
+# Table of Contents
+
+- [Table of Contents](#table-of-contents)
 - [Distributed Training with Docker](#distributed-training-with-docker)
   - [Prerequisites](#prerequisites)
   - [Running the code](#running-the-code)
@@ -11,14 +14,14 @@
 
 ## Prerequisites
 
-To run this, you'll need to install the NVIDIA Container Toolkit from the [official installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+To run this, you'll need to install the NVIDIA Container Toolkit by following the [official installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 
 ## Running the code
 
 Key parameters:
 
-- The --nnodes flag represents the number of machines communicating over a (simulated) network
-- The --nproc_per_node flag stands for the number of GPUs on a single machine.
+- The `--nnodes` flag represents the number of machines communicating over a (simulated) network
+- The `--nproc_per_node` flag stands for the number of GPUs on a single machine.
 
 To simulate 2 GPUs (processes) on a single machine (node) run:
 
@@ -60,7 +63,7 @@ The main training file is [train.py](./distributed/train.py).
 
 ## Dependencies
 
-1. Install the NVIDIA Container Toolkit from the [official installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
+1. Install the NVIDIA Container Toolkit by following the [official installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 
 2. Check your CUDA version by running
 

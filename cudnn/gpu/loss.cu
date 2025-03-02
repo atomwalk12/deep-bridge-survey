@@ -18,7 +18,6 @@ __global__ void mse_backward_kernel(float* prediction, float* target, float* gra
     }
 }
 
-
 float MSELoss::compute(float* prediction, float* target, int size) {
     int block_size = 256;
     int num_blocks = (size + block_size - 1) / block_size;
