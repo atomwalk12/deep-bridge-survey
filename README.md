@@ -3,18 +3,29 @@ The report is available in [here](docs/report.pdf) and the poster [here](docs/po
 
 ![image](https://github.com/user-attachments/assets/8e0ed1f4-09ff-42f5-a1b6-4dc73542d43a)
 
-# Table of Contents
+<!-- TABLE OF CONTENTS -->
 
-- [Table of Contents](#table-of-contents)
-- [Distributed Training with Docker](#distributed-training-with-docker)
-  - [Prerequisites](#prerequisites)
-  - [Running the code](#running-the-code)
-  - [Training script](#training-script)
-- [Simple cuDNN network](#simple-cudnn-network)
-  - [Dependencies](#dependencies)
-  - [Building and running the Code](#building-and-running-the-code)
-  - [Code walkthrough](#code-walkthrough)
-
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#distributed-training-with-docker">Distributed Training with Docker</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#running-the-code">Running the code</a></li>
+        <li><a href="#training-script">Training script</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#simple-cudnn-network">Simple cuDNN Network</a>
+      <ul>
+        <li><a href="#dependencies">Dependencies</a></li>
+        <li><a href="#building-and-running-the-code">Building and running the code</a></li>
+        <li><a href="#code-walkthrough">Code walkthrough</a></li>
+      </ul>
+    </li>
+  </ol>
+</details>
 # Distributed Training with Docker
 
 ## Prerequisites
