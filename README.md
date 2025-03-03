@@ -26,6 +26,7 @@ The report is available in [here](docs/report.pdf) and the poster [here](docs/po
     </li>
   </ol>
 </details>
+
 # Distributed Training with Docker
 
 ## Prerequisites
