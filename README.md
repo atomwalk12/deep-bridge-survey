@@ -39,7 +39,7 @@ The report is available in [here](docs/report.pdf) and the poster [here](docs/po
 
 ## Conducting a survey
 
-- :fire::fire::fire:   **Artificial intelligence for literature reviews: opportunities and challenges**, Springer [[paper](https://doi.org/10.1007/s10462-024-10902-3)]
+- :fire: :fire: :fire:   **Artificial intelligence for literature reviews: opportunities and challenges**, Springer [[paper](https://doi.org/10.1007/s10462-024-10902-3)]
 
 
 - **Guidelines for performing Systematic Literature Reviews in Software Engineering**, None [[paper](https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf)]
@@ -61,12 +61,12 @@ The report is available in [here](docs/report.pdf) and the poster [here](docs/po
 
 -  **TensorFlow**, arXiv:1603.04467 [[paper](http://arxiv.org/abs/1603.04467)]
 - **BytePS**, arXiv:None [[paper](https://www.usenix.org/system/files/osdi20-jiang.pdf)]
-- :fire::fire::fire:   **HuggingFace's Transformers**, arXiv:1910.03771 [[paper](http://arxiv.org/abs/1910.03771)]
+- :fire: :fire: :fire:   **HuggingFace's Transformers**, arXiv:1910.03771 [[paper](http://arxiv.org/abs/1910.03771)]
 - :fire:  **Pytorch Lightning**, official [[docs](https://lightning.ai/docs/overview/)]
 - **FairScale**, official [[docs](https://fairscale.readthedocs.io/en/latest/)]
 - **Amazon SageMaker Platform**, official [[docs](https://docs.aws.amazon.com/sagemaker/)]
 - **Microsoft AzureML Platform**, official [[docs](https://learn.microsoft.com/en-us/azure/machine-learning/?view=azureml-api-2)]
-- :fire::fire:  **Google Vertex AI Platform**, official [[docs](https://cloud.google.com/vertex-ai/docs)]
+- :fire: :fire:  **Google Vertex AI Platform**, official [[docs](https://cloud.google.com/vertex-ai/docs)]
 
 **Hybrid:**
 
