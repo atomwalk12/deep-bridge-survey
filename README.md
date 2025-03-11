@@ -1,4 +1,3 @@
-
 The report is available in [here](docs/report.pdf) and the poster [here](docs/poster.pdf).
 
 ![image](https://github.com/user-attachments/assets/8e0ed1f4-09ff-42f5-a1b6-4dc73542d43a)
@@ -8,6 +7,15 @@ The report is available in [here](docs/report.pdf) and the poster [here](docs/po
 <details>
   <summary>Table of Contents</summary>
   <ol>
+      <li>
+      <a href="#resources">Resources</a>
+      <ul>
+        <li><a href="#conducting-a-survey">Conducting a survey</a></li>
+        <li><a href="#similar-surveys">Similar surveys</a></li>
+        <li><a href="#dnn-studies">DNN Studies</a></li>
+        <li><a href="#gpu-studies">GPU Studies</a></li>
+      </ul>
+    </li>
     <li>
       <a href="#distributed-training-with-docker">Distributed Training with Docker</a>
       <ul>
@@ -26,6 +34,104 @@ The report is available in [here](docs/report.pdf) and the poster [here](docs/po
     </li>
   </ol>
 </details>
+
+# Resources
+
+## Conducting a survey
+
+- :fire::fire::fire:   **Artificial intelligence for literature reviews: opportunities and challenges**, Springer [[paper](https://doi.org/10.1007/s10462-024-10902-3)]
+
+
+- **Guidelines for performing Systematic Literature Reviews in Software Engineering**, None [[paper](https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf)]
+- **Lessons from applying the systematic literature review process within the software engineering domain**, Elsevier [[paper](https://linkinghub.elsevier.com/retrieve/pii/S016412120600197X)]
+- **Procedures for Performing Systematic Reviews**, ResearchGate [[paper](https://www.researchgate.net/publication/228756057_Procedures_for_Performing_Systematic_Reviews)]
+- **Reporting systematic reviews: Some lessons from a tertiary study**, ScienceDirect [[paper](https://www.sciencedirect.com/science/article/pii/S0950584916303548)]
+- :fire: :fire: **Sustainable systematic literature reviews**, ScienceDirect [[paper](https://www.sciencedirect.com/science/article/pii/S0950584924001563)]
+
+## Similar surveys
+
+- **Machine Learning and Deep Learning frameworks and libraries for large-scale data mining: a survey**, Springer [[paper](https://doi.org/10.1007/s10462-018-09679-z)]
+- **From distributed machine to distributed deep learning: a comprehensive survey**, Springer [[paper](https://doi.org/10.1186/s40537-023-00829-x)]
+- :fire: **A Hitchhiker’s Guide On Distributed Training of Deep Neural Networks**, arXiv:1810.11787 [[paper](http://arxiv.org/abs/1810.11787)]
+- **A Systematic Review of Distributed Deep Learning Frameworks for Big Data**, Springer [[paper](https://doi.org/10.1007/978-3-031-13832-4_21)]
+
+## DNN Studies
+
+**Data:**
+
+-  **TensorFlow**, arXiv:1603.04467 [[paper](http://arxiv.org/abs/1603.04467)]
+- **BytePS**, arXiv:None [[paper](https://www.usenix.org/system/files/osdi20-jiang.pdf)]
+- :fire::fire::fire:   **HuggingFace's Transformers**, arXiv:1910.03771 [[paper](http://arxiv.org/abs/1910.03771)]
+- :fire:  **Pytorch Lightning**, official [[docs](https://lightning.ai/docs/overview/)]
+- **FairScale**, official [[docs](https://fairscale.readthedocs.io/en/latest/)]
+- **Amazon SageMaker Platform**, official [[docs](https://docs.aws.amazon.com/sagemaker/)]
+- **Microsoft AzureML Platform**, official [[docs](https://learn.microsoft.com/en-us/azure/machine-learning/?view=azureml-api-2)]
+- :fire::fire:  **Google Vertex AI Platform**, official [[docs](https://cloud.google.com/vertex-ai/docs)]
+
+**Hybrid:**
+
+- **MXNet**, SemanticScholar [[paper](https://www.semanticscholar.org/paper/MXNet%3A-A-Flexible-and-Efficient-Machine-Learning-Chen-Li/62df84d6a4d26f95e4714796c2337c9848cc13b5)]
+- :fire: :fire: **PyTorch Distributed**, arXiv:2006.15704 [[paper](http://arxiv.org/abs/2006.15704)]
+- **Colossal AI**, arXiv:2110.14883 [[paper](http://arxiv.org/abs/2110.14883)]
+- **Ray**, arXiv:1712.05889 [[paper](http://arxiv.org/abs/1712.05889)]
+- :fire: **DeepSpeed**, ACM [[paper](https://dl.acm.org/doi/10.1145/3394486.3406703)]
+- **Horovod**, arXiv:1802.05799 [[paper](http://arxiv.org/abs/1802.05799)]
+- :fire: **Jax**, GoogleResearch [[paper](https://research.google/pubs/compiling-machine-learning-programs-via-high-level-tracing/)]
+
+**Pipeline:**
+
+- **GPipe**, arXiv:1811.06965 [[paper](http://arxiv.org/abs/1811.06965)]
+
+**Model:**
+
+- :fire: **GShard**, arXiv:2006.16668 [[paper](http://arxiv.org/abs/2006.16668)]
+- :fire: **Megatron-LM**, arXiv:1909.08053 [[paper](http://arxiv.org/abs/1909.08053)]
+
+---
+
+## GPU Studies
+
+**NVIDIA:**
+
+- :fire: :fire: **cuBLAS**, official [[docs](https://developer.nvidia.com/cublas)]
+- :fire: :fire: **cuDNN**, arXiv:1410.0759 [[paper](http://arxiv.org/abs/1410.0759)]
+- **NCCL**, official [[docs](https://developer.nvidia.com/nccl)]
+- **CUTLASS**, official [[github](https://github.com/NVIDIA/cutlass)]
+- :fire: **CUDA Toolkit Samples**, official [[examples](https://github.com/NVIDIA/cuda-samples)]
+- **CUDA.jl**, official [[github](https://github.com/JuliaGPU/CUDA.jl)]
+- :fire: **CuPy**, SemanticScholar [[paper](https://www.semanticscholar.org/paper/CuPy-%3A-A-NumPy-Compatible-Library-for-NVIDIA-GPU-Okuta-Unno/a59da4639436f582e483347a4833e7659fd3e598)]
+- **Numba**, official [[github](https://github.com/numba/numba)]
+
+**AMD:**
+
+- :fire: **rocBLAS**, official [[github](https://github.com/ROCm/rocBLAS)]
+- :fire: **MIOpen**, official [[github](https://github.com/ROCm/MIOpen)]
+- **HIP**, official [[github](https://github.com/ROCm/HIP)]
+- **RCCL**, official [[github](https://github.com/ROCm/rccl)]
+- **AMD Lab Notes**, official [[examples](https://github.com/amd/amd-lab-notes)]
+- **AMDGPU.jl**, official [[github](https://github.com/JuliaGPU/AMDGPU.jl)]
+
+**Intel:**
+
+- **oneMKL**, official [[docs](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-documentation.html)]
+- :fire: **oneDNN**, official [[github](https://github.com/oneapi-src/oneDNN)]
+- **oneCCL**, official [[github](https://github.com/uxlfoundation/oneCCL)]
+- **oneAPI.jl**, official [[github](https://github.com/JuliaGPU/oneAPI.jl)]
+- **Intel Compute Samples**, official [[examples](https://github.com/intel/compute-samples)]
+
+**Cross-Platform:**
+
+- **OpenCL**, official-docs [[github](https://github.com/KhronosGroup/OpenCL-Docs)]
+- **SYCL**, official-docs [[github](https://github.com/KhronosGroup/SYCL-Docs)]
+- **Kokkos**, official [[github](https://github.com/kokkos/kokkos)]
+
+**NN Libraries:**
+
+- :fire: **Caffe**, arXiv:1408.5093 [[paper](http://arxiv.org/abs/1408.5093)]
+- :fire: **Cuda-Convnet**, CodeArchive [[paper](https://code.google.com/archive/p/cuda-convnet/)]
+- **Pylearn2**, arXiv:1308.4214 [[paper](http://arxiv.org/abs/1308.4214)]
+- **Torch7**, collobert [[paper](https://ronan.collobert.com/pub/matos/2011_torch7_nipsw.pdf)]
+
 
 # Distributed Training with Docker
 
