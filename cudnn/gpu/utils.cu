@@ -1,8 +1,8 @@
 #include "utils.h"
 #include <stdio.h>
 
-// Debug configuration
-bool ENABLE_DEBUG_OUTPUT = false;  // Definition with default value
+
+bool ENABLE_DEBUG_OUTPUT = false;
 
 void debugDescriptor(const char* name, cudnnTensorDescriptor_t desc) {
     if (!ENABLE_DEBUG_OUTPUT) return;
@@ -135,7 +135,7 @@ void cost_history_add(CostHistory *history, float value) {
 }
 
 void plot_cost_ascii(CostHistory *history) {
-    // This function was inspired from:
+    // This function was modified from:
     // https://github.com/karam-koujan/mini-pytorch/
     char graph[GRAPH_HEIGHT][GRAPH_WIDTH + 1];
     float range = history->max - history->min;
@@ -155,7 +155,7 @@ void plot_cost_ascii(CostHistory *history) {
     }
     
     // Plot points with improved x-axis distribution
-    float min_y[GRAPH_WIDTH];  // Track minimum value for each x position
+    float min_y[GRAPH_WIDTH];
     for (int i = 0; i < GRAPH_WIDTH; i++) {
         min_y[i] = history->max;
     }

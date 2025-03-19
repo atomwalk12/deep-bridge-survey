@@ -36,7 +36,6 @@ ConvolutionLayer::ConvolutionLayer(cudnnHandle_t& cudnn_handle,
 }
 
 void ConvolutionLayer::createDescriptors() {   
-    // Input descriptor
     cudnnCreateTensorDescriptor(&input_descriptor);
     cudnnSetTensor4dDescriptor(
         input_descriptor,
@@ -45,7 +44,7 @@ void ConvolutionLayer::createDescriptors() {
         batch_size, in_channels, input_height, input_width
     );
 
-    // Filter descriptor
+
     cudnnCreateFilterDescriptor(&filter_descriptor);
     cudnnSetFilter4dDescriptor(
         filter_descriptor,
@@ -54,7 +53,7 @@ void ConvolutionLayer::createDescriptors() {
         out_channels, in_channels, kernel_size, kernel_size
     );
 
-    // Convolution descriptor
+
     cudnnCreateConvolutionDescriptor(&conv_descriptor);
     cudnnSetConvolution2dDescriptor(
         conv_descriptor,
@@ -68,7 +67,7 @@ void ConvolutionLayer::createDescriptors() {
         CUDNN_DATA_FLOAT
     );
 
-    // Calculate output dimensions
+
     int out_n, out_c, out_h, out_w;
     cudnnGetConvolution2dForwardOutputDim(
         conv_descriptor,
@@ -81,10 +80,9 @@ void ConvolutionLayer::createDescriptors() {
     );
 
     // Store output dimensions as class members
-    output_height = out_h;  // Add to header
-    output_width = out_w;   // Add to header
+    output_height = out_h;
+    output_width = out_w;
 
-    // Output descriptor
     cudnnCreateTensorDescriptor(&output_descriptor);
     cudnnSetTensor4dDescriptor(
         output_descriptor,
@@ -111,8 +109,6 @@ void ConvolutionLayer::createDescriptors() {
     debugDescriptor("Input", input_descriptor);
     debugDescriptor("Output", output_descriptor);
     debugFilterDescriptor(filter_descriptor);
-
-    // Debug print first few weights
     debugTensorValues("weights", weights, 10);
 
     // Get workspace size needed for the selected algorithm

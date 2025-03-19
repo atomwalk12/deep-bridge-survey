@@ -45,7 +45,7 @@ void Network::backwardInput(float* inp_grad, float* out_grad) {
         if (i == 0) {
             current_input_grad = inp_grad;
         } else {
-            current_input_grad = gradient_outputs[i-1];  // Store in gradient_outputs instead of layer_outputs
+            current_input_grad = gradient_outputs[i-1]; 
         }
 
         // Compute gradients
@@ -67,10 +67,8 @@ void Network::backwardParams(float* inp, float* out_grad) {
     // Compute parameter gradients for each layer
     for (int i = layers.size() - 1; i >= 0; i--) {
         if (auto* conv_layer = dynamic_cast<ConvolutionLayer*>(layers[i])) {
-            // Handle convolutional layer
             conv_layer->backwardParams(current_input, current_output_grad);
         } else if (auto* fc_layer = dynamic_cast<FCLayer*>(layers[i])) {
-            // Handle fully connected layer
             fc_layer->backwardParams(current_input, current_output_grad);
         }
         
@@ -106,10 +104,10 @@ void Network::zeroGradients() {
 }
 
 Network::~Network() {
-    // Destroy cublas handle
+
     cublasDestroy(cublas);
     
-    // Free layer objects
+
     for (Layer* layer : layers) {
         delete layer;
     }
@@ -130,7 +128,6 @@ Network::~Network() {
 }
 
 void Network::addConvLayer(int out_channels, int kernel_size, int stride, int padding) {
-    // Create and add the convolutional layer using current dimensions
     ConvolutionLayer* conv_layer = new ConvolutionLayer(
         cudnn, 
         current_width_, 
@@ -149,33 +146,26 @@ void Network::addConvLayer(int out_channels, int kernel_size, int stride, int pa
     current_height_ = conv_layer->getOutputHeight();
     current_channels_ = out_channels;
     
-    // Allocate memory for layer outputs and gradients
     size_t output_size = batch_size_ * current_channels_ * current_height_ * current_width_;
     
-    // Forward pass output
     float* layer_output;
     cudaMallocManaged(&layer_output, output_size * sizeof(float));
     layer_outputs.push_back(layer_output);
 
-    // Backward pass gradient
     float* gradient_output;
     cudaMallocManaged(&gradient_output, output_size * sizeof(float));
     gradient_outputs.push_back(gradient_output);
 }
 
 void Network::addFCLayer(int in_features, int out_features) {
-    // Create and add the fully connected layer
     layers.push_back(new FCLayer(cudnn, batch_size_, in_features, out_features));
     
-    // Allocate memory for layer outputs and gradients
     size_t output_size = batch_size_ * out_features * sizeof(float);
     
-    // Forward pass output
     float* layer_output;
     cudaMalloc(&layer_output, output_size);
     layer_outputs.push_back(layer_output);
 
-    // Backward pass gradient
     float* gradient_output;
     cudaMalloc(&gradient_output, output_size);
     gradient_outputs.push_back(gradient_output);

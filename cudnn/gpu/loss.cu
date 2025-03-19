@@ -22,7 +22,6 @@ float MSELoss::compute(float* prediction, float* target, int size) {
     int block_size = 256;
     int num_blocks = (size + block_size - 1) / block_size;
     
-    // Allocate temporary buffer dynamically
     float* d_buffer;
     cudaMallocManaged(&d_buffer, size * sizeof(float));
     
@@ -31,7 +30,7 @@ float MSELoss::compute(float* prediction, float* target, int size) {
         prediction, target, d_buffer, size
     );
     
-    // Check for kernel launch errors
+
     cudaError_t err = cudaGetLastError();
     if (err != cudaSuccess) {
         printf("Kernel launch failed: %s\n", cudaGetErrorString(err));

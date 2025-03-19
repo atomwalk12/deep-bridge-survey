@@ -172,7 +172,7 @@ def main_worker(config: ModelConfig):
             optimizer.load_state_dict(checkpoint["optimizer"])
             scheduler.load_state_dict(checkpoint["scheduler"])
 
-            # Utils
+
             assert config.arch == checkpoint["arch"], "Model architecture mismatch"
             assert config.num_classes == checkpoint["num_classes"], "Number of classes mismatch"
             assert config.dataset == checkpoint["dataset"], "Dataset mismatch"
@@ -354,7 +354,6 @@ def validate(config, val_loader, model, criterion, device, global_train_step):
             images = images.to(device)
             target = target.to(device)
 
-            # Forward pass
             output = model(images)  # [batch_size, num_classes]
             loss = criterion(output, target)  # scalar
 
@@ -375,7 +374,7 @@ def validate(config, val_loader, model, criterion, device, global_train_step):
         "f1": metrics["f1"].compute(),
     }
 
-    # Log metrics if using wandb
+    # Log metrics if using wandb. This is done only by the master node.
     if config.global_rank == 0:
         wandb.log({f"val/{k}": v for k, v in results.items()}, step=global_train_step, sync=False)
 
