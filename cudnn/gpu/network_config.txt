@@ -1,0 +1,20 @@
+# Benchmark parameters
+NUM_ITERATIONS=300
+WARMUP_ITERATIONS=300
+
+# Network parameters
+BATCH_SIZE=1
+NUM_CLASSES=3
+IN_CHANNELS=1
+INPUT_HEIGHT=3
+INPUT_WIDTH=3
+
+# Convolution layers (out_channels,kernel_size,stride,padding)
+CONV=16,3,1,1
+CONV=32,3,1,1
+CONV=64,3,1,1
+
+# Fully connected layers (out_features)
+FC=512
+FC=128
+FC=-1  # Use NUM_CLASSES

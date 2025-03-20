@@ -2,7 +2,38 @@
 #include <chrono>
 #include <stdio.h>
 
+// Benchmark parameters
+int NUM_ITERATIONS = 300;
+int WARMUP_ITERATIONS = 300;
+
+// Network parameters
+int BATCH_SIZE = 1;
+int NUM_CLASSES = 3;
+int IN_CHANNELS = 1;
+int INPUT_HEIGHT = 3;
+int INPUT_WIDTH = 3;
+
+int CONV1_OUT_CHANNELS = 16;
+int CONV1_KERNEL_SIZE = 3;
+int CONV1_STRIDE = 1;
+int CONV1_PADDING = 1;
+
+int CONV2_OUT_CHANNELS = 32;
+int CONV2_KERNEL_SIZE = 3;
+int CONV2_STRIDE = 1;
+int CONV2_PADDING = 1;
+
+int CONV3_OUT_CHANNELS = 64;
+int CONV3_KERNEL_SIZE = 3;
+int CONV3_STRIDE = 1;
+int CONV3_PADDING = 1;
+
+int INPUT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
+int OUTPUT_SIZE = BATCH_SIZE * NUM_CLASSES;
+int INPUT_GRADIENT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
+
 CUDNNBenchmark::CUDNNBenchmark(
+    std::string config_path,
     int batchSize,
     int numClasses,
     int inChannels,
@@ -15,6 +46,7 @@ CUDNNBenchmark::CUDNNBenchmark(
     int warmupIterations,
     int benchmarkIterations
 ) : 
+    config_path_(config_path),
     batchSize_(batchSize),
     numClasses_(numClasses),
     inChannels_(inChannels),
@@ -34,12 +66,33 @@ CUDNNBenchmark::CUDNNBenchmark(
     initializeNetwork();
     allocateMemory();
     initializeData();
-}
+} 
 
 void CUDNNBenchmark::initializeNetwork() {
+    // Load configuration
+    std::map<std::string, int> params;
+    std::vector<std::vector<int>> convLayers;
+    std::vector<std::vector<int>> fcLayers;
+    
+    if (!loadSimpleConfig(config_path_, params, convLayers, fcLayers)) {
+        throw std::runtime_error("Failed to load configuration file");
+    }
+
     model_ = new Network(cudnn_, batchSize_, numClasses_, inputWidth_, inputHeight_, inChannels_);
-    model_->addConvLayer(convOutChannels_, convKernelSize_, convStride_, convPadding_);
-    model_->addFCLayer(model_->getFlattenedSize(), numClasses_);
+    for (const auto& layer : convLayers) {
+        model_->addConvLayer(layer[0], layer[1], layer[2], layer[3]);
+    }
+    
+    // Add FC layers
+    int prev_size = model_->getFlattenedSize();
+    for (const auto& layer : fcLayers) {
+        int out_features = layer[0];
+        if (out_features == -1) {
+            out_features = NUM_CLASSES;
+        }
+        model_->addFCLayer(prev_size, out_features);
+        prev_size = out_features;
+    }
 }
 
 void CUDNNBenchmark::allocateMemory() {

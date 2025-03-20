@@ -1,5 +1,13 @@
 #include "utils.h"
+#include "network.h"
 #include <stdio.h>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <map>
+#include <chrono>
+#include <iostream>
+
 
 bool ENABLE_DEBUG_OUTPUT = false;
 
@@ -271,4 +279,109 @@ void plot_cost_ascii(CostHistory *history)
     }
 
     fflush(stdout);
+}
+
+
+bool loadSimpleConfig(const std::string& filename, std::map<std::string, int>& params, 
+                     std::vector<std::vector<int>>& convLayers, 
+                     std::vector<std::vector<int>>& fcLayers) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        printf("Failed to open configuration file: %s\n", filename.c_str());
+        return false;
+    }
+    
+    std::string line;
+    while (std::getline(file, line)) {
+        // Skip empty lines and comments
+        if (line.empty() || line[0] == '#') continue;
+        
+        std::istringstream iss(line);
+        std::string key;
+        if (std::getline(iss, key, '=')) {
+            // Trim whitespace
+            key.erase(0, key.find_first_not_of(" \t"));
+            key.erase(key.find_last_not_of(" \t") + 1);
+            
+            // Handle different types of parameters
+            if (key == "CONV") {
+                // Format: CONV=out_channels,kernel_size,stride,padding
+                std::string value;
+                std::getline(iss, value);
+                std::istringstream vss(value);
+                std::vector<int> convParams;
+                std::string param;
+                while (std::getline(vss, param, ',')) {
+                    convParams.push_back(std::stoi(param));
+                }
+                if (convParams.size() == 4) {
+                    convLayers.push_back(convParams);
+                }
+            } else if (key == "FC") {
+                // Format: FC=out_features
+                std::string value;
+                std::getline(iss, value);
+                fcLayers.push_back({std::stoi(value)});
+            } else {
+                // Regular parameters
+                std::string value;
+                std::getline(iss, value);
+                params[key] = std::stoi(value);
+            }
+        }
+    }
+    
+    return true;
+}
+
+
+
+// Create a function to build network from configuration
+Network* buildNetworkFromConfig(const std::string& config_path, cudnnHandle_t cudnn,
+                              int& NUM_ITERATIONS, int& WARMUP_ITERATIONS,
+                              int& BATCH_SIZE, int& NUM_CLASSES, 
+                              int& INPUT_SIZE, int& OUTPUT_SIZE, int& INPUT_GRADIENT_SIZE) {
+    // Load configuration
+    std::map<std::string, int> params;
+    std::vector<std::vector<int>> convLayers;
+    std::vector<std::vector<int>> fcLayers;
+    
+    if (!loadSimpleConfig(config_path, params, convLayers, fcLayers)) {
+        throw std::runtime_error("Failed to load configuration file");
+    }
+    
+    // Use parameters with defaults as fallback
+    NUM_ITERATIONS = params.count("NUM_ITERATIONS") ? params["NUM_ITERATIONS"] : 300;
+    WARMUP_ITERATIONS = params.count("WARMUP_ITERATIONS") ? params["WARMUP_ITERATIONS"] : 300;
+    BATCH_SIZE = params.count("BATCH_SIZE") ? params["BATCH_SIZE"] : 1;
+    NUM_CLASSES = params.count("NUM_CLASSES") ? params["NUM_CLASSES"] : 3;
+    int IN_CHANNELS = params.count("IN_CHANNELS") ? params["IN_CHANNELS"] : 1;
+    int INPUT_HEIGHT = params.count("INPUT_HEIGHT") ? params["INPUT_HEIGHT"] : 3;
+    int INPUT_WIDTH = params.count("INPUT_WIDTH") ? params["INPUT_WIDTH"] : 3;
+    
+    // Calculate derived parameters
+    INPUT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
+    OUTPUT_SIZE = BATCH_SIZE * NUM_CLASSES;
+    INPUT_GRADIENT_SIZE = INPUT_SIZE;
+    
+    // Create network
+    Network* model = new Network(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
+    
+    // Add convolution layers
+    for (const auto& layer : convLayers) {
+        model->addConvLayer(layer[0], layer[1], layer[2], layer[3]);
+    }
+    
+    // Add FC layers
+    int prev_size = model->getFlattenedSize();
+    for (const auto& layer : fcLayers) {
+        int out_features = layer[0];
+        if (out_features == -1) {
+            out_features = NUM_CLASSES;
+        }
+        model->addFCLayer(prev_size, out_features);
+        prev_size = out_features;
+    }
+    
+    return model;
 }

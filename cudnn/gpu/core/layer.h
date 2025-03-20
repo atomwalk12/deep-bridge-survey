@@ -1,12 +1,14 @@
 #ifndef LAYER_H
 #define LAYER_H
-
+#include <stdio.h>
 #include <cudnn.h>
 
 class Layer
 {
 public:
-    Layer(cudnnHandle_t &cudnn_handle) : cudnn(cudnn_handle) {}
+    Layer(cudnnHandle_t &cudnn_handle) : cudnn(cudnn_handle) {
+        printf("Layer constructor called\n");
+    }
     virtual ~Layer() = default;
 
     virtual void createDescriptors() = 0;

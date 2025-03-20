@@ -5,26 +5,34 @@
 #include "core/utils.h"
 
 // Benchmark parameters
-const int NUM_ITERATIONS = 100;
-const int WARMUP_ITERATIONS = 300;
+int NUM_ITERATIONS = 300;
+int WARMUP_ITERATIONS = 300;
 
 // Network parameters
-const int BATCH_SIZE = 1;
-const int NUM_CLASSES = 3;
+int BATCH_SIZE = 1;
+int NUM_CLASSES = 3;
+int IN_CHANNELS = 1;
+int INPUT_HEIGHT = 3;
+int INPUT_WIDTH = 3;
 
-const int IN_CHANNELS = 1;
-const int INPUT_HEIGHT = 2;
-const int INPUT_WIDTH = 3;
+int CONV1_OUT_CHANNELS = 16;
+int CONV1_KERNEL_SIZE = 3;
+int CONV1_STRIDE = 1;
+int CONV1_PADDING = 1;
 
-const int CONV_OUT_CHANNELS = 2;
-const int CONV_KERNEL_SIZE = 2;
-const int CONV_STRIDE = 1;
-const int CONV_PADDING = 0;
+int CONV2_OUT_CHANNELS = 32;
+int CONV2_KERNEL_SIZE = 3;
+int CONV2_STRIDE = 1;
+int CONV2_PADDING = 1;
 
-// Define sizes in terms of number of elements
-const int INPUT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
-const int OUTPUT_SIZE = BATCH_SIZE * NUM_CLASSES;
-const int INPUT_GRADIENT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
+int CONV3_OUT_CHANNELS = 64;
+int CONV3_KERNEL_SIZE = 3;
+int CONV3_STRIDE = 1;
+int CONV3_PADDING = 1;
+
+int INPUT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
+int OUTPUT_SIZE = BATCH_SIZE * NUM_CLASSES;
+int INPUT_GRADIENT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
 
 
 int main()
@@ -36,17 +44,15 @@ int main()
     checkCUDNN(cudnnCreate(&cudnn));
 
     // Create network
+    Network model = buildNetworkFromConfig("network_config.txt", cudnn, NUM_ITERATIONS, WARMUP_ITERATIONS, BATCH_SIZE, NUM_CLASSES, INPUT_SIZE, OUTPUT_SIZE, INPUT_GRADIENT_SIZE);
     Network model(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
 
-    model.addConvLayer(
-        CONV_OUT_CHANNELS,
-        CONV_KERNEL_SIZE,
-        CONV_STRIDE,
-        CONV_PADDING);
-
-    model.addFCLayer(
-        model.getFlattenedSize(),
-        NUM_CLASSES);
+    model.addConvLayer(CONV1_OUT_CHANNELS, CONV1_KERNEL_SIZE, CONV1_STRIDE, CONV1_PADDING);
+    model.addConvLayer(CONV2_OUT_CHANNELS, CONV2_KERNEL_SIZE, CONV2_STRIDE, CONV2_PADDING);
+    model.addConvLayer(CONV3_OUT_CHANNELS, CONV3_KERNEL_SIZE, CONV3_STRIDE, CONV3_PADDING);
+    model.addFCLayer(model.getFlattenedSize(), 512);
+    model.addFCLayer(512, 128);
+    model.addFCLayer(128, NUM_CLASSES);
 
     // Initialize cost history
     CostHistory cost_history;

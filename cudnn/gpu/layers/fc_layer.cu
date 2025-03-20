@@ -15,7 +15,11 @@ FCLayer::FCLayer(cudnnHandle_t &cudnn_handle,
       output_features(output_features)
 {
 
-    cublasCreate(&cublas_handle);
+    cublasStatus_t status = cublasCreate(&cublas_handle);
+    if (status != CUBLAS_STATUS_SUCCESS) {
+        printf("cuBLAS initialization failed: %d\n", status);
+        exit(1);
+    }
     createDescriptors();
 
     // Allocate and initialize weights

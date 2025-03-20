@@ -6,6 +6,17 @@
     "configurations": [
         {
             // CUDA Debug for GPU trainer
+            "name": "CUDA Debug benchmark_",
+            "type": "cuda-gdb",
+            "request": "launch",
+            "program": "${workspaceFolder}/cudnn/gpu_trainer",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "CUDA: nvcc debug build"
+        },
+        {
+            // CUDA Debug for GPU trainer
             "name": "CUDA Run benchmark",
             "type": "cuda-gdb",
             "request": "launch",

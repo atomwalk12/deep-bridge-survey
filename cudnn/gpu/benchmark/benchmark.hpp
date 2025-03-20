@@ -8,6 +8,7 @@
 class CUDNNBenchmark {
 public:
     CUDNNBenchmark(
+        std::string config_path_,
         int batchSize = 1,
         int numClasses = 3,
         int inChannels = 1,
@@ -37,6 +38,7 @@ private:
     const int convPadding_;
     const int warmupIterations_;
     const int benchmarkIterations_;
+    const std::string config_path_;
 
     // Derived sizes
     const int inputSize_;

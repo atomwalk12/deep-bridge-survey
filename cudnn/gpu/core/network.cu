@@ -11,7 +11,11 @@ Network::Network(cudnnHandle_t &handle, int batch_size, int num_classes_, int in
       current_height_(initial_height),
       current_channels_(initial_channels)
 {
-    cublasCreate(&cublas);
+    cublasStatus_t status = cublasCreate(&cublas);
+    if (status != CUBLAS_STATUS_SUCCESS) {
+        printf("cuBLAS initialization failed: %d\n", status);
+        exit(1);
+    }
 }
 
 void Network::forward(float *inp, float *out)

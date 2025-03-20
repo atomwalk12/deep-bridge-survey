@@ -4,6 +4,14 @@
 #include <cudnn.h>
 #include <stdio.h>
 #include <string.h>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <map>
+#include <vector>
+
+// Forward declare Network class
+class Network;
 
 #define MAX_HISTORY 2000
 #define GRAPH_WIDTH 60
@@ -29,5 +37,12 @@ void debugMatrixLayout(const char *label, float *device_ptr,
 void cost_history_init(CostHistory *history);
 void cost_history_add(CostHistory *history, float value);
 void plot_cost_ascii(CostHistory *history);
+bool loadSimpleConfig(const std::string& filename, std::map<std::string, int>& params, 
+                     std::vector<std::vector<int>>& convLayers, 
+                     std::vector<std::vector<int>>& fcLayers);
 
+Network* buildNetworkFromConfig(const std::string& config_path, cudnnHandle_t cudnn,
+                            int& NUM_ITERATIONS, int& WARMUP_ITERATIONS,
+                            int& BATCH_SIZE, int& NUM_CLASSES, 
+                            int& INPUT_SIZE, int& OUTPUT_SIZE, int& INPUT_GRADIENT_SIZE);
 #endif // UTILS_H

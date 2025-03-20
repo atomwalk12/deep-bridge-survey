@@ -32,7 +32,12 @@ ConvolutionLayer::ConvolutionLayer(cudnnHandle_t &cudnn_handle,
     int total_elements = batch_size * out_channels * output_height * output_width;
     relu = new ReLU(total_elements);
 
-    cublasCreate(&cublas_handle);
+    // Create cuBLAS handle and check for success
+    cublasStatus_t cublas_status = cublasCreate(&cublas_handle);
+    if (cublas_status != CUBLAS_STATUS_SUCCESS) {
+        printf("cuBLAS initialization failed: %d\n", cublas_status);
+        exit(1);
+    }
 }
 
 void ConvolutionLayer::createDescriptors()
