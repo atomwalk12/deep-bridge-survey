@@ -27,23 +27,19 @@ public:
 
 private:
     // Network parameters
-    const int batchSize_;
-    const int numClasses_;
-    const int inChannels_;
-    const int inputHeight_;
-    const int inputWidth_;
-    const int convOutChannels_;
-    const int convKernelSize_;
-    const int convStride_;
-    const int convPadding_;
-    const int warmupIterations_;
-    const int benchmarkIterations_;
+    int batchSize_;
+    int numClasses_;
+    int inChannels_;
+    int inputHeight_;
+    int inputWidth_;
+    int warmupIterations_;
+    int benchmarkIterations_;
     const std::string config_path_;
 
     // Derived sizes
-    const int inputSize_;
-    const int outputSize_;
-    const int inputGradientSize_;
+    int inputSize_;
+    int outputSize_;
+    int inputGradientSize_;
 
     // CUDNN handle
     cudnnHandle_t cudnn_;
@@ -56,7 +52,10 @@ private:
     float *inputGradient_;
     float *targetData_;
 
-    void initializeNetwork();
+    void initializeNetwork(
+        const std::vector<std::vector<int>>& convLayers,
+        const std::vector<std::vector<int>>& fcLayers
+    );
     void allocateMemory();
     void initializeData();
     void runWarmup();

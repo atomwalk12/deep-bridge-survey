@@ -4,21 +4,6 @@
 #include "loss/loss.h"
 #include "core/utils.h"
 
-// Benchmark parameters
-const int NUM_ITERATIONS = 300;
-
-// Network parameters
-const int BATCH_SIZE = 1;
-const int NUM_CLASSES = 3;
-const int IN_CHANNELS = 1;
-const int INPUT_HEIGHT = 3;
-const int INPUT_WIDTH = 3;
-
-const int INPUT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
-const int OUTPUT_SIZE = BATCH_SIZE * NUM_CLASSES;
-const int INPUT_GRADIENT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
-
-
 int main(int argc, char **argv)
 {
     // Default configuration file path
@@ -27,6 +12,32 @@ int main(int argc, char **argv)
     if (argc > 1) {
         config_path = argv[1]; // if command line argument is provided
     }
+    // Load configuration
+    std::map<std::string, int> params;
+    std::vector<std::vector<int>> convLayers;
+    std::vector<std::vector<int>> fcLayers;
+    
+    if (!loadSimpleConfig(config_path, params, convLayers, fcLayers)) {
+        throw std::runtime_error("Failed to load configuration file");
+    }
+
+
+    int batchSize_, numClasses_, inChannels_, inputHeight_, inputWidth_;
+    int benchmarkIterations_, inputSize_, outputSize_, inputGradientSize_;
+    // Update parameters from config file if they exist
+    if (params.count("BATCH_SIZE")) batchSize_ = params["BATCH_SIZE"];
+    if (params.count("NUM_CLASSES")) numClasses_ = params["NUM_CLASSES"];
+    if (params.count("IN_CHANNELS")) inChannels_ = params["IN_CHANNELS"];
+    if (params.count("INPUT_HEIGHT")) inputHeight_ = params["INPUT_HEIGHT"];
+    if (params.count("INPUT_WIDTH")) inputWidth_ = params["INPUT_WIDTH"];
+    if (params.count("NUM_ITERATIONS")) benchmarkIterations_ = params["NUM_ITERATIONS"];
+    
+    // Update derived parameters
+    inputSize_ = batchSize_ * inChannels_ * inputWidth_ * inputHeight_;
+    outputSize_ = batchSize_ * numClasses_;
+    inputGradientSize_ = batchSize_ * inChannels_ * inputWidth_ * inputHeight_;
+
+
     // ==============================
     // Initialization
     // ==============================
@@ -39,10 +50,10 @@ int main(int argc, char **argv)
     // Create input data
     float *input_data, *output_data;
 
-    cudaMallocManaged(&input_data, INPUT_SIZE * sizeof(float));
-    cudaMallocManaged(&output_data, OUTPUT_SIZE * sizeof(float));
+    cudaMallocManaged(&input_data, inputSize_ * sizeof(float));
+    cudaMallocManaged(&output_data, outputSize_ * sizeof(float));
 
-    float static_input[BATCH_SIZE][IN_CHANNELS][INPUT_HEIGHT][INPUT_WIDTH] = {
+    float static_input[batchSize_][inChannels_][inputHeight_][inputWidth_] = {
         {// batch 0
          {
              // channel 0
@@ -51,17 +62,17 @@ int main(int argc, char **argv)
              {1.0f, 0.0f, 1.0f}  // row 2
          }}};
 
-    for (int i = 0; i < INPUT_SIZE; i++)
+    for (int i = 0; i < inputSize_; i++)
     {
         input_data[i] = ((float *)static_input)[i];
     }
 
     // Create target data
     float *target_data;
-    cudaMallocManaged(&target_data, OUTPUT_SIZE * sizeof(float));
+    cudaMallocManaged(&target_data, outputSize_ * sizeof(float));
 
     // Use one-hot encoding where 1 represents the correct class
-    for (int i = 0; i < OUTPUT_SIZE; i++)
+    for (int i = 0; i < outputSize_; i++)
     {
         target_data[i] = (i == 0) ? 1.0f : 0.0f;
     }
@@ -69,16 +80,8 @@ int main(int argc, char **argv)
     // ==============================
     // Create the network
     // ==============================
-    // Load configuration
-    std::map<std::string, int> params;
-    std::vector<std::vector<int>> convLayers;
-    std::vector<std::vector<int>> fcLayers;
-    
-    if (!loadSimpleConfig(config_path, params, convLayers, fcLayers)) {
-        throw std::runtime_error("Failed to load configuration file");
-    }
 
-    Network model(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
+    Network model(cudnn, batchSize_, numClasses_, inputWidth_, inputHeight_, inChannels_);
     for (const auto& layer : convLayers) {
         model.addConvLayer(layer[0], layer[1], layer[2], layer[3]);
     }
@@ -88,7 +91,7 @@ int main(int argc, char **argv)
     for (const auto& layer : fcLayers) {
         int out_features = layer[0];
         if (out_features == -1) {
-            out_features = NUM_CLASSES;
+            out_features = numClasses_;
         }
         model.addFCLayer(prev_size, out_features);
         prev_size = out_features;
@@ -97,7 +100,7 @@ int main(int argc, char **argv)
     float *output_gradient = model.createDummyGradient(output_data);
     float *input_gradient;
 
-    cudaMallocManaged(&input_gradient, INPUT_GRADIENT_SIZE * sizeof(float));
+    cudaMallocManaged(&input_gradient, inputGradientSize_ * sizeof(float));
     cudaDeviceSynchronize();
 
     // ==============================
@@ -105,18 +108,18 @@ int main(int argc, char **argv)
     // ==============================
     MSELoss loss;
 
-    for (int i = 0; i < NUM_ITERATIONS; i++)
+    for (int i = 0; i < benchmarkIterations_; i++)
     {
         model.zeroGradients();
 
         model.forward(input_data, output_data);
 
-        float loss_value = loss.compute(output_data, target_data, OUTPUT_SIZE);
+        float loss_value = loss.compute(output_data, target_data, outputSize_);
 
         if (i % 10 == 0)
             cost_history_add(&cost_history, loss_value);
 
-        loss.backward(output_data, target_data, output_gradient, OUTPUT_SIZE);
+        loss.backward(output_data, target_data, output_gradient, outputSize_);
 
         model.backwardInput(input_gradient, output_gradient);
         model.backwardParams(input_data, output_gradient);

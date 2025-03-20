@@ -2,35 +2,6 @@
 #include <chrono>
 #include <stdio.h>
 
-// Benchmark parameters
-int NUM_ITERATIONS = 300;
-int WARMUP_ITERATIONS = 300;
-
-// Network parameters
-int BATCH_SIZE = 1;
-int NUM_CLASSES = 3;
-int IN_CHANNELS = 1;
-int INPUT_HEIGHT = 3;
-int INPUT_WIDTH = 3;
-
-int CONV1_OUT_CHANNELS = 16;
-int CONV1_KERNEL_SIZE = 3;
-int CONV1_STRIDE = 1;
-int CONV1_PADDING = 1;
-
-int CONV2_OUT_CHANNELS = 32;
-int CONV2_KERNEL_SIZE = 3;
-int CONV2_STRIDE = 1;
-int CONV2_PADDING = 1;
-
-int CONV3_OUT_CHANNELS = 64;
-int CONV3_KERNEL_SIZE = 3;
-int CONV3_STRIDE = 1;
-int CONV3_PADDING = 1;
-
-int INPUT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
-int OUTPUT_SIZE = BATCH_SIZE * NUM_CLASSES;
-int INPUT_GRADIENT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
 
 CUDNNBenchmark::CUDNNBenchmark(
     std::string config_path,
@@ -52,10 +23,6 @@ CUDNNBenchmark::CUDNNBenchmark(
     inChannels_(inChannels),
     inputHeight_(inputHeight),
     inputWidth_(inputWidth),
-    convOutChannels_(convOutChannels),
-    convKernelSize_(convKernelSize),
-    convStride_(convStride),
-    convPadding_(convPadding),
     warmupIterations_(warmupIterations),
     benchmarkIterations_(benchmarkIterations),
     inputSize_(batchSize * inChannels * inputWidth * inputHeight),
@@ -63,13 +30,8 @@ CUDNNBenchmark::CUDNNBenchmark(
     inputGradientSize_(batchSize * inChannels * inputWidth * inputHeight)
 {
     checkCUDNN(cudnnCreate(&cudnn_));
-    initializeNetwork();
-    allocateMemory();
-    initializeData();
-} 
-
-void CUDNNBenchmark::initializeNetwork() {
-    // Load configuration
+    
+    // Load configuration first
     std::map<std::string, int> params;
     std::vector<std::vector<int>> convLayers;
     std::vector<std::vector<int>> fcLayers;
@@ -78,7 +40,31 @@ void CUDNNBenchmark::initializeNetwork() {
         throw std::runtime_error("Failed to load configuration file");
     }
 
+    // Update parameters from config file if they exist
+    if (params.count("BATCH_SIZE")) batchSize_ = params["BATCH_SIZE"];
+    if (params.count("NUM_CLASSES")) numClasses_ = params["NUM_CLASSES"];
+    if (params.count("IN_CHANNELS")) inChannels_ = params["IN_CHANNELS"];
+    if (params.count("INPUT_HEIGHT")) inputHeight_ = params["INPUT_HEIGHT"];
+    if (params.count("INPUT_WIDTH")) inputWidth_ = params["INPUT_WIDTH"];
+    if (params.count("WARMUP_ITERATIONS")) warmupIterations_ = params["WARMUP_ITERATIONS"];
+    if (params.count("NUM_ITERATIONS")) benchmarkIterations_ = params["NUM_ITERATIONS"];
+
+    // Update derived parameters
+    inputSize_ = batchSize_ * inChannels_ * inputWidth_ * inputHeight_;
+    outputSize_ = batchSize_ * numClasses_;
+    inputGradientSize_ = batchSize_ * inChannels_ * inputWidth_ * inputHeight_;
+
+    initializeNetwork(convLayers, fcLayers);
+    allocateMemory();
+    initializeData();
+}
+
+void CUDNNBenchmark::initializeNetwork(
+    const std::vector<std::vector<int>>& convLayers,
+    const std::vector<std::vector<int>>& fcLayers
+) {
     model_ = new Network(cudnn_, batchSize_, numClasses_, inputWidth_, inputHeight_, inChannels_);
+    
     for (const auto& layer : convLayers) {
         model_->addConvLayer(layer[0], layer[1], layer[2], layer[3]);
     }
@@ -88,7 +74,7 @@ void CUDNNBenchmark::initializeNetwork() {
     for (const auto& layer : fcLayers) {
         int out_features = layer[0];
         if (out_features == -1) {
-            out_features = NUM_CLASSES;
+            out_features = numClasses_;
         }
         model_->addFCLayer(prev_size, out_features);
         prev_size = out_features;
