@@ -10,7 +10,9 @@
             "type": "cuda-gdb",
             "request": "launch",
             "program": "${workspaceFolder}/cudnn/gpu_trainer",
-            "args": ["${workspaceFolder}/cudnn/gpu/network_config.txt"],
+            "args": [
+                "${workspaceFolder}/cudnn/gpu/network_config.txt"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "CUDA: Run benchmark"
@@ -21,7 +23,9 @@
             "type": "cuda-gdb",
             "request": "launch",
             "program": "${workspaceFolder}/cudnn/toy_network",
-            "args": ["${workspaceFolder}/cudnn/gpu/network_config.txt"],
+            "args": [
+                "${workspaceFolder}/cudnn/gpu/network_config.txt"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "CUDA: nvcc toy network"
@@ -45,6 +49,17 @@
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
+            ]
+        },
+        {
+            "name": "Python Debugger: Current File with Arguments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/pytorch/benchmark.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--config-path",
+                "${workspaceFolder}/pytorch/network_config.json"
             ]
         },
         {

@@ -6,17 +6,17 @@ from typing import Dict, Tuple
 import torch
 import torch.backends.cudnn as cudnn
 import torch.nn as nn
+from toy_network import ToyNetwork
 import torchvision.models as models
-
 
 class CUDNNBenchmark:
     def __init__(
         self,
         model: nn.Module,
         use_cpu: bool = False,
-        batch_size: int = 640,
-        warmup_steps: int = 1000,
-        benchmark_steps: int = 50,
+        batch_size: int = 1,
+        warmup_steps: int = 300,
+        benchmark_steps: int = 300,
     ):
         print(f"Using GPU: {not use_cpu}")
         # Initialize CUDA context
@@ -76,7 +76,7 @@ class CUDNNBenchmark:
         return input_tensor
 
     def _get_input_size(self) -> Tuple[int, int, int, int]:
-        return (self.batch_size, 3, 224, 224)
+        return (self.batch_size, 1, 3, 3)
 
     def _configure_cudnn(
         self, enabled: bool = True, benchmark: bool = True, deterministic: bool = False
@@ -198,19 +198,44 @@ class CUDNNBenchmark:
         return backward_params_time
 
 
+def _load_config(config_path):
+    """Load network configuration from JSON file"""
+    import json
+    try:
+        with open(config_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        raise Exception(f"Error loading configuration file: {e}")
+
 if __name__ == "__main__":
     """This script follows the same structural style as torch7/imagenet_winners/benchmark.lua"""
     warnings.filterwarnings("ignore", category=UserWarning)
+    
+    # Can use both cpu and gpu, the config file should match /cudnn/gpu/network_config.txt
     parser = argparse.ArgumentParser()
     parser.add_argument("--use-cpu", action="store_true")
+    parser.add_argument("--config-path", type=str, default="network_config.json")
     args = parser.parse_args()
-
+    
+    
+    # Models to choose from
     models = {
         "alexnet": models.alexnet(weights=models.AlexNet_Weights.DEFAULT),
         "vgg_a": models.vgg11_bn(weights=models.VGG11_BN_Weights.DEFAULT),
         "googlenet": models.googlenet(weights=models.GoogLeNet_Weights.DEFAULT),
+        "toy_network": ToyNetwork(args.config_path),
     }
+    
 
-    benchmark = CUDNNBenchmark(model=models["alexnet"], use_cpu=args.use_cpu)
+    # Use the toy network configuration from the cuDNN benchmark (see cudnn/gpu/run_benchmark.cu)
+    config = _load_config(args.config_path)
+    benchmark = CUDNNBenchmark(
+        model=models["toy_network"], 
+        use_cpu=args.use_cpu,
+        batch_size=config["network"]["batch_size"],
+        warmup_steps=config["benchmark"]["warmup_iterations"],
+        benchmark_steps=config["benchmark"]["num_iterations"]
+    )
+    
     results = benchmark.run_benchmark()
     print(results)

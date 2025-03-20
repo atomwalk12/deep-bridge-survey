@@ -222,17 +222,17 @@ The docker-compose commands are optional. To execute the code without Docker, si
 
 ## Code walkthrough
 
-- `Network` [@gpu/network.cu](./cudnn/gpu/network.cu): It stores an array of layers, manages forward/backward passes, and updates weights.
+- `Network` [@gpu/core/network.cu](./cudnn/gpu/core/network.cu): It stores an array of layers, manages forward/backward passes, and updates weights.
 
-- `ConvolutionLayer` [@gpu/conv_layer.cu](./cudnn/gpu/conv_layer.cu): Implements 2D convolution operations using cuDNN
+- `ConvolutionLayer` [@gpu/layers/conv_layer.cu](./cudnn/gpu/layers/conv_layer.cu): Implements 2D convolution operations using cuDNN
 
-- `FCLayer` [@gpu/fc_layer.cu](./cudnn/gpu/fc_layer.cu): Implements fully connected layers using cuBLAS
+- `FCLayer` [@gpu/layers/fc_layer.cu](./cudnn/gpu/layers/fc_layer.cu): Implements fully connected layers using cuBLAS
 
-- `ReLU` [@gpu/relu.cu](./cudnn/gpu/relu.cu): Implements the ReLU activation function using custom CUDA kernels
+- `ReLU` [@gpu/layers/relu.cu](./cudnn/gpu/layers/relu.cu): Implements the ReLU activation function using custom CUDA kernels
 
-- `MSELoss` [@gpu/loss.cu](./cudnn/gpu/loss.cu): Implements Mean Squared Error loss computation and gradients
+- `MSELoss` [@gpu/loss/loss.cu](./cudnn/gpu/loss/loss.cu): Implements Mean Squared Error loss computation and gradients
 
-- `CostHistory` [@gpu/utils.cu](./cudnn/gpu/utils.cu): Tracks and visualizes training loss over time
+- `CostHistory` [@gpu/core/utils.cu](./cudnn/gpu/core/utils.cu): Tracks and visualizes training loss over time
 
 Below is a simplified example implementation of a neural network training process. Check [toy_network.cu](./cudnn/gpu/toy_network.cu) for the complete code:
 

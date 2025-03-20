@@ -1,0 +1,23 @@
+{
+  "benchmark": {
+    "num_iterations": 10000,
+    "warmup_iterations": 10000
+  },
+  "network": {
+    "batch_size": 1,
+    "num_classes": 3,
+    "in_channels": 1,
+    "input_height": 3,
+    "input_width": 3
+  },
+  "conv_layers": [
+    {"out_channels": 16, "kernel_size": 3, "stride": 1, "padding": 1},
+    {"out_channels": 32, "kernel_size": 3, "stride": 1, "padding": 1},
+    {"out_channels": 64, "kernel_size": 3, "stride": 1, "padding": 1}
+  ],
+  "fc_layers": [
+    {"out_features": 512},
+    {"out_features": 128},
+    {"out_features": -1}
+  ]
+}
