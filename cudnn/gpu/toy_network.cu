@@ -14,29 +14,19 @@ const int IN_CHANNELS = 1;
 const int INPUT_HEIGHT = 3;
 const int INPUT_WIDTH = 3;
 
-const int CONV1_OUT_CHANNELS = 16;
-const int CONV1_KERNEL_SIZE = 3;
-const int CONV1_STRIDE = 1;
-const int CONV1_PADDING = 1;
-
-const int CONV2_OUT_CHANNELS = 32;
-const int CONV2_KERNEL_SIZE = 3;
-const int CONV2_STRIDE = 1;
-const int CONV2_PADDING = 1;
-
-const int CONV3_OUT_CHANNELS = 64;
-const int CONV3_KERNEL_SIZE = 3;
-const int CONV3_STRIDE = 1;
-const int CONV3_PADDING = 1;
-
 const int INPUT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
 const int OUTPUT_SIZE = BATCH_SIZE * NUM_CLASSES;
 const int INPUT_GRADIENT_SIZE = BATCH_SIZE * IN_CHANNELS * INPUT_WIDTH * INPUT_HEIGHT;
 
 
-int main()
+int main(int argc, char **argv)
 {
-
+    // Default configuration file path
+    std::string config_path = "gpu/network_config.txt"; // Assume the program is running from the cudnn folder
+    
+    if (argc > 1) {
+        config_path = argv[1]; // if command line argument is provided
+    }
     // ==============================
     // Initialization
     // ==============================
@@ -79,14 +69,30 @@ int main()
     // ==============================
     // Create the network
     // ==============================
-    Network model(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
+    // Load configuration
+    std::map<std::string, int> params;
+    std::vector<std::vector<int>> convLayers;
+    std::vector<std::vector<int>> fcLayers;
+    
+    if (!loadSimpleConfig(config_path, params, convLayers, fcLayers)) {
+        throw std::runtime_error("Failed to load configuration file");
+    }
 
-    model.addConvLayer(CONV1_OUT_CHANNELS, CONV1_KERNEL_SIZE, CONV1_STRIDE, CONV1_PADDING);
-    model.addConvLayer(CONV2_OUT_CHANNELS, CONV2_KERNEL_SIZE, CONV2_STRIDE, CONV2_PADDING);
-    model.addConvLayer(CONV3_OUT_CHANNELS, CONV3_KERNEL_SIZE, CONV3_STRIDE, CONV3_PADDING);
-    model.addFCLayer(model.getFlattenedSize(), 512);
-    model.addFCLayer(512, 128);
-    model.addFCLayer(128, NUM_CLASSES);
+    Network model(cudnn, BATCH_SIZE, NUM_CLASSES, INPUT_WIDTH, INPUT_HEIGHT, IN_CHANNELS);
+    for (const auto& layer : convLayers) {
+        model.addConvLayer(layer[0], layer[1], layer[2], layer[3]);
+    }
+    
+    // Add FC layers
+    int prev_size = model.getFlattenedSize();
+    for (const auto& layer : fcLayers) {
+        int out_features = layer[0];
+        if (out_features == -1) {
+            out_features = NUM_CLASSES;
+        }
+        model.addFCLayer(prev_size, out_features);
+        prev_size = out_features;
+    }
 
     float *output_gradient = model.createDummyGradient(output_data);
     float *input_gradient;

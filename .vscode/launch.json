@@ -6,22 +6,11 @@
     "configurations": [
         {
             // CUDA Debug for GPU trainer
-            "name": "CUDA Debug benchmark_",
-            "type": "cuda-gdb",
-            "request": "launch",
-            "program": "${workspaceFolder}/cudnn/gpu_trainer",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "preLaunchTask": "CUDA: nvcc debug build"
-        },
-        {
-            // CUDA Debug for GPU trainer
             "name": "CUDA Run benchmark",
             "type": "cuda-gdb",
             "request": "launch",
             "program": "${workspaceFolder}/cudnn/gpu_trainer",
-            "args": [],
+            "args": ["${workspaceFolder}/cudnn/gpu/network_config.txt"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "CUDA: Run benchmark"
@@ -32,7 +21,7 @@
             "type": "cuda-gdb",
             "request": "launch",
             "program": "${workspaceFolder}/cudnn/toy_network",
-            "args": [],
+            "args": ["${workspaceFolder}/cudnn/gpu/network_config.txt"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "CUDA: nvcc toy network"
@@ -57,14 +46,6 @@
                     "ignoreFailures": true
                 }
             ]
-        },
-        {
-            "name": "Distributed Debug",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/distributed/train.py",
-            "args": [],
-            "cwd": "${workspaceFolder}/distributed/",
         },
         {
             "name": "Torchrun Distributed Debug",

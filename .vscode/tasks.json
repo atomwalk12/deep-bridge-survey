@@ -28,42 +28,6 @@
         {
             // CUDA build for GPU trainer
             "type": "cppbuild",
-            "label": "CUDA: nvcc debug build",
-            "command": "nvcc",
-            "args": [
-                "-g", 
-                "-G",
-                "-O0",
-                "-arch=sm_89",
-                "--compiler-options",
-                "'-fPIC'",
-                "cudnn/gpu/benchmark_.cu",
-                "cudnn/gpu/core/network.cu",
-                "cudnn/gpu/layers/conv_layer.cu",
-                "cudnn/gpu/core/utils.cu",
-                "cudnn/gpu/loss/loss.cu",
-                "cudnn/gpu/layers/fc_layer.cu",
-                "cudnn/gpu/layers/relu.cu",
-                "-o",
-                "cudnn/gpu_trainer",
-                "-lcudnn",
-                "-lcublas"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [
-                "$nvcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            },
-            "detail": "Task for CUDA debugging"
-        },
-        {
-            // CUDA build for GPU trainer
-            "type": "cppbuild",
             "label": "CUDA: Run benchmark",
             "command": "nvcc",
             "args": [
