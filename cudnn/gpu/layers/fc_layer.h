@@ -3,7 +3,7 @@
 
 #include <cudnn.h>
 #include <cublas_v2.h>
-#include "layer.h"
+#include "../core/layer.h"
 
 class FCLayer : public Layer {
 public:

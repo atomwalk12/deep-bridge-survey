@@ -134,6 +134,7 @@ def main_worker(config: ModelConfig):
     # Load training modules
     model = load_model(config, device)
     optimizer = torch.optim.Adam(model.parameters(), lr=config.lr, eps=1e-9)
+
     # LR decays by 10% every 30 epochs
     scheduler = StepLR(optimizer, step_size=30, gamma=0.1)
 

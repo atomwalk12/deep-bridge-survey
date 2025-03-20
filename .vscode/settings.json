@@ -55,5 +55,6 @@
         "rdzv",
         "torchrun"
     ],
-    "C_Cpp.default.compilerPath": ""
+    "C_Cpp.default.compilerPath": "",
+    "cSpell.enabled": true
 }

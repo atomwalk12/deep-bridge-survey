@@ -1,7 +1,7 @@
 #ifndef CONV_LAYER_H
 #define CONV_LAYER_H
 
-#include "layer.h"
+#include "../core/layer.h"
 #include <cublas_v2.h>
 #include "relu.h"
 

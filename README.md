@@ -149,6 +149,7 @@ Key parameters:
 To simulate 2 GPUs (processes) on a single machine (node) run:
 
 ```bash
+cd distributed
 # Start the containers
 docker-compose -f docker-compose-multi-process.yaml up -d
 
@@ -163,6 +164,7 @@ torchrun --nnodes=1 --nproc_per_node=2 --rdzv_id=456 --rdzv_backend=c10d --rdzv_
 Also, you can simulate training over multiple machines with a single GPU for each:
 
 ```bash
+cd distributed
 # Start the containers
 docker-compose -f docker-compose-multi-node.yaml up -d
 

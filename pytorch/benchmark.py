@@ -135,8 +135,7 @@ class CUDNNBenchmark:
         start_time = time.perf_counter()
 
         for _ in range(self.steps):
-            # NOTE Is necessary?
-            # self.model.zero_grad(set_to_none=True)
+            self.model.zero_grad(set_to_none=True)
 
             final_output = self.model(input_tensor)
             torch.cuda.synchronize()
