@@ -6,9 +6,7 @@
 class Layer
 {
 public:
-    Layer(cudnnHandle_t &cudnn_handle) : cudnn(cudnn_handle) {
-        printf("Layer constructor called\n");
-    }
+    Layer(cudnnHandle_t &cudnn_handle) : cudnn(cudnn_handle) {}
     virtual ~Layer() = default;
 
     virtual void createDescriptors() = 0;
