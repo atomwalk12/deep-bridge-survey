@@ -17,10 +17,16 @@ class CUDNNBenchmark:
         batch_size: int = 1,
         warmup_steps: int = 300,
         benchmark_steps: int = 300,
+        in_channels: int = 3,
+        input_height: int = 224,
+        input_width: int = 224,
     ):
         print(f"Using GPU: {not use_cpu}")
         # Initialize CUDA context
         torch.cuda.init()
+        self.in_channels = in_channels
+        self.input_height = input_height
+        self.input_width = input_width
 
         # Move model to GPU and set to train mode
         self.batch_size = batch_size
@@ -76,7 +82,7 @@ class CUDNNBenchmark:
         return input_tensor
 
     def _get_input_size(self) -> Tuple[int, int, int, int]:
-        return (self.batch_size, 1, 3, 3)
+        return (self.batch_size, self.in_channels, self.input_height, self.input_width)
 
     def _configure_cudnn(
         self, enabled: bool = True, benchmark: bool = True, deterministic: bool = False
@@ -234,7 +240,10 @@ if __name__ == "__main__":
         use_cpu=args.use_cpu,
         batch_size=config["network"]["batch_size"],
         warmup_steps=config["benchmark"]["warmup_iterations"],
-        benchmark_steps=config["benchmark"]["num_iterations"]
+        benchmark_steps=config["benchmark"]["num_iterations"],
+        in_channels=config["network"]["in_channels"],
+        input_height=config["network"]["input_height"],
+        input_width=config["network"]["input_width"]
     )
     
     results = benchmark.run_benchmark()

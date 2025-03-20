@@ -330,3 +330,16 @@ Cost Function Over Epochs
   0.4410 ┴────────────────────────────────────────────────── 30 epochs
 */
 ```
+
+## Benchmarking
+
+Evaluation results for cuDNN and PyTorch networks, configured identically according to [network_config.txt](./cudnn/gpu/network_config.txt) and [network_config.json](./pytorch/network_config.json), are presented below:
+
+
+| Framework | Average Forward Pass Time (ms) | Average Backward Input Pass Time (ms) | Average Backward Params Pass Time (ms) | Total Time (ms) |
+| --------- | ------------------------------ | ------------------------------------- | -------------------------------------- | --------------- |
+| cuDNN     | 0.206760                       | 0.214760                              | 0.028600                               | 0.450120        |
+| PyTorch   | 0.137913                       | 0.112698                              | 0.198538                               | 0.449149        |
+
+
+The files to replicate the results are available in the [pytorch](./pytorch/benchmark.py) and [cudnn](./cudnn/gpu/run_benchmark.cu) directories.
