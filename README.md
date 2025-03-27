@@ -1,6 +1,6 @@
 The report is available in [here](docs/report.pdf) and the poster [here](docs/poster.pdf).
 
-![image](https://github.com/user-attachments/assets/af21a90e-a7a6-45cb-9d52-4468b8094de9)
+![image](https://github.com/user-attachments/assets/6d0ad539-4c6c-4c6a-9a31-cac7526f18c1)
 
 
 <!-- TABLE OF CONTENTS -->
