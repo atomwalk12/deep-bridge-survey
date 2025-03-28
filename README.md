@@ -219,7 +219,7 @@ Average backward params pass time: 0.030010 ms
 Total time: 0.377030 ms
 ```
 
-The docker-compose commands are optional. To execute the code without Docker, simply run `compile.sh` and `runner.sh` ignoring the docker commands. You'll need to have 
+The docker-compose commands are optional. To execute the code without Docker, simply run `compile.sh` and `runner.sh` ignoring the docker commands.
 
 ## Code walkthrough
 
