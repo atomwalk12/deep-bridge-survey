@@ -80,7 +80,6 @@ int main(int argc, char **argv)
     // ==============================
     // Create the network
     // ==============================
-
     Network model(cudnn, batchSize_, numClasses_, inputWidth_, inputHeight_, inChannels_);
     for (const auto& layer : convLayers) {
         model.addConvLayer(layer[0], layer[1], layer[2], layer[3]);
