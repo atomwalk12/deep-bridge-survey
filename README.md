@@ -1,4 +1,4 @@
-The report is available in [here](docs/report.pdf) and the poster [here](docs/poster.pdf).
+The report is available [here](docs/report.pdf) and the poster [here](docs/poster.pdf).
 
 ![image](https://github.com/user-attachments/assets/6d0ad539-4c6c-4c6a-9a31-cac7526f18c1)
 
