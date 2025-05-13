@@ -40,11 +40,11 @@ The report is available [here](docs/report.pdf) and the poster [here](docs/poste
 
 ## Conducting a survey
 
-- :fire: :fire: :fire:   **Artificial intelligence for literature reviews: opportunities and challenges**, Springer [[paper](https://doi.org/10.1007/s10462-024-10902-3)]
+- :fire: :fire:   **Artificial intelligence for literature reviews: opportunities and challenges**, Springer [[paper](https://doi.org/10.1007/s10462-024-10902-3)]
 
 
 - **Guidelines for performing Systematic Literature Reviews in Software Engineering**, None [[paper](https://legacyfileshare.elsevier.com/promis_misc/525444systematicreviewsguide.pdf)]
-- **Lessons from applying the systematic literature review process within the software engineering domain**, Elsevier [[paper](https://linkinghub.elsevier.com/retrieve/pii/S016412120600197X)]
+- :fire: **Lessons from applying the systematic literature review process within the software engineering domain**, Elsevier [[paper](https://linkinghub.elsevier.com/retrieve/pii/S016412120600197X)]
 - **Procedures for Performing Systematic Reviews**, ResearchGate [[paper](https://www.researchgate.net/publication/228756057_Procedures_for_Performing_Systematic_Reviews)]
 - **Reporting systematic reviews: Some lessons from a tertiary study**, ScienceDirect [[paper](https://www.sciencedirect.com/science/article/pii/S0950584916303548)]
 - :fire: :fire: **Sustainable systematic literature reviews**, ScienceDirect [[paper](https://www.sciencedirect.com/science/article/pii/S0950584924001563)]
@@ -62,7 +62,7 @@ The report is available [here](docs/report.pdf) and the poster [here](docs/poste
 
 -  **TensorFlow**, arXiv:1603.04467 [[paper](http://arxiv.org/abs/1603.04467)]
 - **BytePS**, arXiv:None [[paper](https://www.usenix.org/system/files/osdi20-jiang.pdf)]
-- :fire: :fire: :fire:   **HuggingFace's Transformers**, arXiv:1910.03771 [[paper](http://arxiv.org/abs/1910.03771)]
+- :fire: :fire:   **HuggingFace's Transformers**, arXiv:1910.03771 [[paper](http://arxiv.org/abs/1910.03771)]
 - :fire:  **Pytorch Lightning**, official [[docs](https://lightning.ai/docs/overview/)]
 - **FairScale**, official [[docs](https://fairscale.readthedocs.io/en/latest/)]
 - **Amazon SageMaker Platform**, official [[docs](https://docs.aws.amazon.com/sagemaker/)]
@@ -213,10 +213,10 @@ docker-compose exec cuda_dev bash # enter the container
 ./compile_benchmark.sh # or ./compile_toynetwork.sh
 ./runner
 # Sample output for benchmark:
-Average forward pass time: 0.185160 ms
-Average backward input pass time: 0.161860 ms
-Average backward params pass time: 0.030010 ms
-Total time: 0.377030 ms
+# Average forward pass time: 0.185160 ms
+# Average backward input pass time: 0.161860 ms
+# Average backward params pass time: 0.030010 ms
+# Total time: 0.377030 ms
 ```
 
 The docker-compose commands are optional. To execute the code without Docker, simply run `compile.sh` and `runner.sh` ignoring the docker commands.
