@@ -78,5 +78,8 @@
         "torchrun"
     ],
     "C_Cpp.default.compilerPath": "",
-    "cSpell.enabled": true
+    "cSpell.enabled": true,
+    "files.watcherExclude": {
+        "**/target": true
+    }
 }

@@ -31,7 +31,7 @@
             "label": "CUDA: Run benchmark",
             "command": "nvcc",
             "args": [
-                "-g", 
+                "-g",
                 "-G",
                 "-O0",
                 "-arch=sm_89",
@@ -68,7 +68,7 @@
             "label": "CUDA: nvcc toy network",
             "command": "nvcc",
             "args": [
-                "-g", 
+                "-g",
                 "-G",
                 "-O0",
                 "-arch=sm_89",
@@ -97,6 +97,12 @@
                 "isDefault": false
             },
             "detail": "Task for CUDA debugging"
+        },
+        {
+            "type": "shell",
+            "label": "Nsight: autostart (localhost)",
+            "command": "cuda-gdbserver ${config:host}:${config:port} ${config:executable}",
+            "problemMatcher": []
         }
     ]
 }
